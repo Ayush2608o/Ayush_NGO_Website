@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Photo & Event Gallery | Asha Foundation</title>
+  <meta name="description" content="Photo & Event Gallery - Glimpses of smile, hope, and social work on the ground by Asha Foundation.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress-bar"></div>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-announcement-bar">
+    <div class="container top-bar-content">
+      <div class="announcement-left">
+        <span class="urgent-badge">URGENT</span>
+        <span class="announcement-text">Winter Relief Drive 2026: Help us reach 10,000 underprivileged children.</span>
+      </div>
+      <div class="announcement-right">
+        <a href="contact.html" class="announcement-link">🤝 Volunteer With Us</a>
+        <a href="tel:1800123456" class="announcement-link">📞 1800-123-456</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container navbar-inner">
+      <a href="index.html" class="brand-logo" aria-label="Asha Foundation Home">
+        <div class="brand-icon-wrapper">🌱</div>
+        <div class="brand-text-group">
+          <span class="brand-name">Asha Foundation</span>
+          <span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span>
+        </div>
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu">☰</button>
+
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="showcase.html" class="nav-showcase-link"><span>田</span><span>All Pages Showcase</span></a></li>
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="work.html" class="nav-link">Our Work</a></li>
+          <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
+          <li><a href="blog.html" class="nav-link">Blog & News</a></li>
+          <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="currency-toggle-btn" aria-label="Switch currency">💵 USD ($)</button>
+        <button type="button" class="theme-toggle-btn" aria-label="Toggle dark mode">🌙 Dark</button>
+        <button class="btn-donate-nav" data-action="donate" data-amount="50">
+          <span>❤</span><span>Donate Now</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Gallery Section (Pages 7 & 8 in PDF) -->
+  <main>
+    <section class="gallery-section">
+      <div class="container">
+        <div class="section-header">
+          <h1 class="section-title">Photo & Event Gallery</h1>
+          <p class="section-subtitle">Glimpses of smile, hope, and social work on the ground.</p>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="gallery-filter-tabs">
+          <button type="button" class="filter-tab active" data-filter="all">All Photos</button>
+          <button type="button" class="filter-tab" data-filter="education">Education</button>
+          <button type="button" class="filter-tab" data-filter="healthcare">Healthcare</button>
+          <button type="button" class="filter-tab" data-filter="environment">Environment</button>
+          <button type="button" class="filter-tab" data-filter="community">Community Relief</button>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div class="gallery-grid">
+          <!-- Item 1: Smiling children -->
+          <div class="gallery-item" data-category="education">
+            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80" alt="Primary School Book Distribution">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>Primary School Book Distribution</p>
+            </div>
+          </div>
+
+          <!-- Item 2: Community meals program -->
+          <div class="gallery-item" data-category="community">
+            <img src="https://images.pexels.com/photos/35247605/pexels-photo-35247605.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=900" alt="Children sharing a meal at a community center" loading="lazy" decoding="async">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>Community Meals Program</p>
+            </div>
+          </div>
+
+          <!-- Item 3: Classroom session -->
+          <div class="gallery-item" data-category="education">
+            <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80" alt="Digital Classroom Interactive Session">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>Digital Classroom Session</p>
+            </div>
+          </div>
+
+          <!-- Item 4: Doctor checkup -->
+          <div class="gallery-item" data-category="healthcare">
+            <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80" alt="Free Medical & Health Camp">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>Free Medical & Health Camp</p>
+            </div>
+          </div>
+
+          <!-- Item 5: Tree plantation -->
+          <div class="gallery-item" data-category="environment">
+            <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80" alt="250,000 Tree Drive Initiative">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>250,000 Tree Drive Initiative</p>
+            </div>
+          </div>
+
+          <!-- Item 6: Women empowerment -->
+          <div class="gallery-item" data-category="community">
+            <img src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=600&q=80" alt="Vocational Skills Training Program">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>Vocational Skills Program</p>
+            </div>
+          </div>
+
+          <!-- Item 7: Clean drinking water -->
+          <div class="gallery-item" data-category="environment">
+            <img src="https://images.pexels.com/photos/35392371/pexels-photo-35392371.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=900" alt="Rural hand pump providing access to clean water" loading="lazy" decoding="async">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>Clean Water Hand Pump</p>
+            </div>
+          </div>
+
+          <!-- Item 8: Relief distribution -->
+          <div class="gallery-item" data-category="community">
+            <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=600&q=80" alt="Winter Relief Package Distribution">
+            <div class="gallery-item-overlay">
+              <span>🔍</span>
+              <p>Winter Relief Package</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Donation Modal -->
+  <div class="modal-overlay" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">✕</button>
+      
+      <div class="modal-header">
+        <div class="modal-heart-icon">💚</div>
+        <h3 class="modal-title" id="donationModalTitle">Make A Donation</h3>
+        <p class="modal-subtitle">Your contribution brings education, healthcare & food to those in need.</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="donation-freq-toggle">
+          <button type="button" class="freq-btn active" data-freq="one-time">One-Time Gift</button>
+          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support (2x Impact)</button>
+        </div>
+
+        <label class="amount-label">SELECT AMOUNT ($)</label>
+        <div class="preset-amounts-row">
+          <button type="button" class="preset-btn" data-amount="25">$25</button>
+          <button type="button" class="preset-btn selected" data-amount="50">$50</button>
+          <button type="button" class="preset-btn" data-amount="100">$100</button>
+        </div>
+
+        <div class="impact-explainer-badge" id="impactExplainerBadge">
+          🌱 Provides complete winter warm clothing & health checkup for 3 children.
+        </div>
+
+        <div class="custom-amount-group form-group">
+          <label class="amount-label" for="customAmountInput">CUSTOM AMOUNT</label>
+          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" step="5">
+        </div>
+
+        <label class="amount-label">PAYMENT METHOD</label>
+        <div class="payment-methods-row">
+          <button type="button" class="payment-method-btn selected">💳 Card</button>
+          <button type="button" class="payment-method-btn">📱 UPI / QR</button>
+          <button type="button" class="payment-method-btn">🏦 NetBanking</button>
+        </div>
+
+        <div class="form-group">
+          <label class="amount-label" for="donorNameInput">YOUR FULL NAME</label>
+          <input type="text" id="donorNameInput" class="form-control" placeholder="e.g. John Doe">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 22px;">
+          <label class="amount-label" for="donorEmailInput">EMAIL ADDRESS</label>
+          <input type="email" id="donorEmailInput" class="form-control" placeholder="e.g. john@example.com">
+        </div>
+
+        <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Submit Donation Request</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <!-- Multi-Column Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom: 14px;">
+            <div class="brand-icon-wrapper">🌱</div>
+            <div class="brand-text-group">
+              <span class="brand-name" style="color:#fff;">Asha Foundation</span>
+              <span class="brand-tagline" style="color:#a7f3d0;">EMPOWERING LIVES, RESTORING HOPE</span>
+            </div>
+          </div>
+          <p class="footer-desc">
+            Asha Foundation is a registered Section 8 non-profit organization dedicated to grassroots transformation across education, healthcare, and ecological conservation since 2012.
+          </p>
+          <div style="margin-top: 14px; font-size: 0.8rem; color: #94a3b8;">
+            Tax Exemption: 80G Certified • NITI Aayog: DL/2012/0054321
+          </div>
+        </div>
+        <div>
+          <h4 class="footer-col-title">Explore Pages</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html">🏠 Home Page</a></li>
+            <li><a href="about.html">👤 About Our Mission</a></li>
+            <li><a href="work.html">💼 Key Initiatives &amp; Projects</a></li>
+            <li><a href="gallery.html">🖼️ Photo &amp; Event Gallery</a></li>
+            <li><a href="blog.html">📰 Latest News &amp; Articles</a></li>
+            <li><a href="contact.html">✉️ Contact &amp; Headquarters</a></li>
+            <li><a href="showcase.html">田 All Pages Showcase</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Active Causes</h4>
+          <ul class="footer-links-list">
+            <li><a href="work.html">Shiksha Mission 2026</a></li>
+            <li><a href="work.html">Mobile Health Vans</a></li>
+            <li><a href="work.html">Clean Earth Drive</a></li>
+            <li><a href="work.html">Winter Relief Drive</a></li>
+            <li><a href="work.html">Women Vocational Cells</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Stay Connected</h4>
+          <p class="footer-desc">Subscribe to receive monthly field reports and transparency audits.</p>
+          <form class="newsletter-form">
+            <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+            <button type="submit" class="newsletter-btn">Join</button>
+          </form>
+          <div id="backendStatusIndicator" style="font-size:0.8rem; color:#94a3b8; margin-top: 18px;"></div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div class="footer-copyright">
+          © <span id="currentYear">2026</span> Asha Foundation NGO. All Rights Reserved. Designed for Maximum Impact.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/deploy-config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

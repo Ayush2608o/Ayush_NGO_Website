@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact Us | Asha Foundation</title>
+  <meta name="description" content="Get in touch with Asha Foundation headquarters in New Delhi. Inquiries for volunteering, partnerships, and donations.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Scroll Progress Indicator -->
+  <div class="scroll-progress-bar"></div>
+
+  <!-- Top Announcement Bar -->
+  <div class="top-announcement-bar">
+    <div class="container top-bar-content">
+      <div class="announcement-left">
+        <span class="urgent-badge">URGENT</span>
+        <span class="announcement-text">Winter Relief Drive 2026: Help us reach 10,000 underprivileged children.</span>
+      </div>
+      <div class="announcement-right">
+        <a href="#" class="announcement-link" data-action="volunteer">🤝 Volunteer With Us</a>
+        <a href="tel:1800123456" class="announcement-link">📞 1800-123-456</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container navbar-inner">
+      <a href="index.html" class="brand-logo" aria-label="Asha Foundation Home">
+        <div class="brand-icon-wrapper">🌱</div>
+        <div class="brand-text-group">
+          <span class="brand-name">Asha Foundation</span>
+          <span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span>
+        </div>
+      </a>
+
+      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu">☰</button>
+
+      <nav>
+        <ul class="nav-menu" id="navMenu">
+          <li><a href="showcase.html" class="nav-showcase-link"><span>田</span><span>All Pages Showcase</span></a></li>
+          <li><a href="index.html" class="nav-link">Home</a></li>
+          <li><a href="about.html" class="nav-link">About Us</a></li>
+          <li><a href="work.html" class="nav-link">Our Work</a></li>
+          <li><a href="gallery.html" class="nav-link">Gallery</a></li>
+          <li><a href="blog.html" class="nav-link">Blog & News</a></li>
+          <li><a href="contact.html" class="nav-link active">Contact Us</a></li>
+        </ul>
+      </nav>
+
+      <div class="header-actions">
+        <button type="button" class="currency-toggle-btn" aria-label="Switch currency">💵 USD ($)</button>
+        <button type="button" class="theme-toggle-btn" aria-label="Toggle dark mode">🌙 Dark</button>
+        <button class="btn-donate-nav" data-action="donate" data-amount="50">
+          <span>❤</span><span>Donate Now</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Contact Us Main Section -->
+  <main>
+    <section class="contact-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="pill-badge pill-badge-cyan" style="margin-bottom: 12px;">We're Here For You</span>
+          <h1 class="section-title">Get In Touch With Us</h1>
+          <p class="section-subtitle">Have questions or want to partner with Asha Foundation? Send us a message.</p>
+        </div>
+
+        <div class="contact-layout-grid">
+          <!-- Left: Send A Message Form -->
+          <div class="contact-form-card">
+            <h2 class="form-box-title">Send A Message</h2>
+            <form id="contactForm" novalidate>
+              <div class="form-group">
+                <label class="form-label" for="contactName">YOUR NAME</label>
+                <input type="text" id="contactName" class="form-control" placeholder="John Doe" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contactEmail">EMAIL ADDRESS</label>
+                <input type="email" id="contactEmail" class="form-control" placeholder="john@example.com" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contactSubject">SUBJECT</label>
+                <input type="text" id="contactSubject" class="form-control" placeholder="Volunteering / Sponsorship Inquiry" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contactMessage">MESSAGE</label>
+                <textarea id="contactMessage" class="form-control" placeholder="Write your message here..." rows="5" required></textarea>
+              </div>
+
+              <button type="submit" class="btn-send-message">
+                <span>Send Message</span>
+                <span>✈</span>
+              </button>
+            </form>
+          </div>
+
+          <!-- Right: Headquarters Contact & Real Interactive Map View -->
+          <div class="contact-info-column">
+            <!-- Dark Navy HQ Box -->
+            <div class="hq-contact-card">
+              <h3 class="hq-card-title">Headquarters Contact</h3>
+              <ul class="hq-details-list">
+                <li class="hq-detail-item">
+                  <span class="hq-icon">📍</span>
+                  <span>Asha Bhawan, 45 Social Welfare Marg, New Delhi, India 110001</span>
+                </li>
+                <li class="hq-detail-item">
+                  <span class="hq-icon">📞</span>
+                  <span>+91 1800-123-456 / +91 98765 43210</span>
+                </li>
+                <li class="hq-detail-item">
+                  <span class="hq-icon">✉</span>
+                  <span>contact@ashafoundation.org</span>
+                </li>
+                <li class="hq-detail-item">
+                  <span class="hq-icon">⏰</span>
+                  <span>Monday - Saturday: 9:00 AM - 6:30 PM IST</span>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Real Embedded Google Map (New Delhi) -->
+            <div class="map-embed-container">
+              <iframe 
+                title="Asha Foundation Central Office Map"
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d112061.26425946215!2d77.12543419999999!3d28.6324291!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x390cfd37b923791f%3A0xd64e43f497a7e8!2sNew%20Delhi%2C%20Delhi!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                allowfullscreen="" 
+                loading="lazy" 
+                referrerpolicy="no-referrer-when-downgrade">
+              </iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ Accordion Section (Enterprise NGO Standard) -->
+    <section class="faq-section">
+      <div class="container">
+        <div class="section-header">
+          <span class="pill-badge pill-badge-green" style="margin-bottom: 12px;">Frequently Asked Questions</span>
+          <h2 class="section-title">Answers to Common Inquiries</h2>
+          <p class="section-subtitle">Everything you need to know about our transparency, tax deductions, and programs.</p>
+        </div>
+
+        <div class="faq-list">
+          <!-- FAQ 1 -->
+          <div class="faq-item active">
+            <button class="faq-question">
+              <span>How are my donations utilized and audited?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              88% of every donated rupee directly funds on-ground field execution (school bags, digital classrooms, mobile medical supplies, midday nutrition). Our finances are audited annually by independent statutory auditors with public disclosures.
+            </div>
+          </div>
+
+          <!-- FAQ 2 -->
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Will I receive a tax exemption certificate under Section 80G?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Yes! All donations to Asha Foundation are eligible for 50% tax deduction under Section 80G of the Indian Income Tax Act (Reg: AAATA0123M20261). An official certificate is instantly generated right after you donate.
+            </div>
+          </div>
+
+          <!-- FAQ 3 -->
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Can our corporation partner through CSR Initiatives?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Absolutely. We are registered under MCA with CSR Registration Number CSR00012345. We partner with companies for employee engagement drives, infrastructure funding, and environmental ESG credits.
+            </div>
+          </div>
+
+          <!-- FAQ 4 -->
+          <div class="faq-item">
+            <button class="faq-question">
+              <span>Can I volunteer remotely from another state or abroad?</span>
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              Yes, our digital volunteer network accepts educators, graphic designers, digital tutors, and tech coordinators who contribute remotely 2-4 hours per week.
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Donation Modal -->
+  <div class="modal-overlay" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle">
+    <div class="modal-card">
+      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">✕</button>
+      
+      <div class="modal-header">
+        <div class="modal-heart-icon">💚</div>
+        <h3 class="modal-title" id="donationModalTitle">Make A Donation</h3>
+        <p class="modal-subtitle">Your contribution brings education, healthcare & food to those in need.</p>
+      </div>
+
+      <div class="modal-body">
+        <div class="donation-freq-toggle">
+          <button type="button" class="freq-btn active" data-freq="one-time">One-Time Gift</button>
+          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support (2x Impact)</button>
+        </div>
+
+        <label class="amount-label">SELECT AMOUNT ($)</label>
+        <div class="preset-amounts-row">
+          <button type="button" class="preset-btn" data-amount="25">$25</button>
+          <button type="button" class="preset-btn selected" data-amount="50">$50</button>
+          <button type="button" class="preset-btn" data-amount="100">$100</button>
+        </div>
+
+        <div class="impact-explainer-badge" id="impactExplainerBadge">
+          🌱 Provides complete winter warm clothing & health checkup for 3 children.
+        </div>
+
+        <div class="custom-amount-group form-group">
+          <label class="amount-label" for="customAmountInput">CUSTOM AMOUNT</label>
+          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" step="5">
+        </div>
+
+        <label class="amount-label">PAYMENT METHOD</label>
+        <div class="payment-methods-row">
+          <button type="button" class="payment-method-btn selected">💳 Card</button>
+          <button type="button" class="payment-method-btn">📱 UPI / QR</button>
+          <button type="button" class="payment-method-btn">🏦 NetBanking</button>
+        </div>
+
+        <div class="form-group">
+          <label class="amount-label" for="donorNameInput">YOUR FULL NAME</label>
+          <input type="text" id="donorNameInput" class="form-control" placeholder="e.g. John Doe">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 22px;">
+          <label class="amount-label" for="donorEmailInput">EMAIL ADDRESS</label>
+          <input type="email" id="donorEmailInput" class="form-control" placeholder="e.g. john@example.com">
+        </div>
+
+        <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Proceed To Pay</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Multi-Column Enterprise Footer -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top-grid">
+        <div>
+          <div class="brand-logo" style="margin-bottom: 14px;">
+            <div class="brand-icon-wrapper">🌱</div>
+            <div class="brand-text-group">
+              <span class="brand-name" style="color:#fff;">Asha Foundation</span>
+              <span class="brand-tagline" style="color:#a7f3d0;">EMPOWERING LIVES, RESTORING HOPE</span>
+            </div>
+          </div>
+          <p class="footer-desc">
+            Asha Foundation is a registered Section 8 non-profit organization dedicated to grassroots transformation across education, healthcare, and ecological conservation since 2012.
+          </p>
+          <div style="margin-top: 14px; font-size: 0.8rem; color: #94a3b8;">
+            Tax Exemption: 80G Certified • NITI Aayog: DL/2012/0054321
+          </div>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Explore Pages</h4>
+          <ul class="footer-links-list">
+            <li><a href="index.html">🏠 Home Page</a></li>
+            <li><a href="about.html">👤 About Our Mission</a></li>
+            <li><a href="work.html">💼 Key Initiatives &amp; Projects</a></li>
+            <li><a href="gallery.html">🖼️ Photo &amp; Event Gallery</a></li>
+            <li><a href="blog.html">📰 Latest News &amp; Articles</a></li>
+            <li><a href="contact.html">✉️ Contact &amp; Headquarters</a></li>
+            <li><a href="showcase.html">田 All Pages Showcase</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Active Causes</h4>
+          <ul class="footer-links-list">
+            <li><a href="work.html">Shiksha Mission 2026</a></li>
+            <li><a href="work.html">Mobile Health Vans</a></li>
+            <li><a href="work.html">Clean Earth Drive</a></li>
+            <li><a href="work.html">Winter Relief Drive</a></li>
+            <li><a href="work.html">Women Vocational Cells</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4 class="footer-col-title">Stay Connected</h4>
+          <p class="footer-desc">Subscribe to receive monthly field reports and transparency audits.</p>
+          <form class="newsletter-form">
+            <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+            <button type="submit" class="newsletter-btn">Join</button>
+          </form>
+          <div id="backendStatusIndicator" style="font-size:0.8rem; color:#94a3b8; margin-top: 18px;"></div>
+        </div>
+      </div>
+
+      <div class="footer-bottom-bar">
+        <div class="footer-copyright">
+          © <span id="currentYear">2026</span> Asha Foundation NGO. All Rights Reserved. Designed for Maximum Impact.
+        </div>
+        <div class="footer-social-links">
+          <a href="#" class="social-icon-btn" aria-label="Twitter">𝕏</a>
+          <a href="#" class="social-icon-btn" aria-label="Facebook">f</a>
+          <a href="#" class="social-icon-btn" aria-label="Instagram">📷</a>
+          <a href="#" class="social-icon-btn" aria-label="LinkedIn">in</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="js/deploy-config.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

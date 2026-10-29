@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: vistar-ngo-java-api
+    runtime: docker
+    plan: starter
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    healthCheckPath: /api/health
+    disk:
+      name: ngo-data
+      mountPath: /var/data
+      sizeGB: 1

@@ -1,0 +1,10 @@
+# Runtime submissions and local files must never be published.
+/data/
+/bin/
+/dist/
+*.class
+*.log
+.env
+.env.*
+!.env.example
+
