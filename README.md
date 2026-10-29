@@ -1,4 +1,4 @@
-# Asha Foundation - Complete NGO Website (6 Pages + Showcase + Java Backend)
+﻿# Asha Foundation - Complete NGO Website (6 Pages + Showcase + Java Backend)
 
 > **Empowering Lives, Restoring Hope**  
 > Clean, Modern, HR-Ready NGO Web Platform built with HTML5, CSS3, ES6 JavaScript, and Java SE REST API Backend.
