@@ -15,8 +15,10 @@ if %errorlevel% neq 0 (
 
 echo.
 echo Java compilation successful!
-echo Launching Server on port 8080...
+echo Launching Server on port 8085...
 echo.
+set PORT=8085
+set FRONTEND_ORIGIN=http://localhost:5500
 java -cp bin backend.NgoServer
 
 pause

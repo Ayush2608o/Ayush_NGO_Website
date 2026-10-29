@@ -11,7 +11,9 @@ Write-Host "Compiling Java Backend (backend/NgoServer.java)..." -ForegroundColor
 
 if ($LASTEXITCODE -eq 0) {
     Write-Host "Compilation successful!" -ForegroundColor Green
-    Write-Host "Starting NgoServer on http://localhost:8080 ..." -ForegroundColor Cyan
+    Write-Host "Starting NgoServer on http://localhost:8085 ..." -ForegroundColor Cyan
+    $env:PORT = "8085"
+    $env:FRONTEND_ORIGIN = "http://localhost:5500"
     & java -cp bin backend.NgoServer
 } else {
     Write-Host "Compilation failed. Install JDK 17+ and make sure javac is on PATH." -ForegroundColor Red

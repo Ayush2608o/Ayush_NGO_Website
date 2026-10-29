@@ -1,16 +1,20 @@
 /**
- * Asha Foundation - API Service Layer
+ * Ayush NGO - API Service Layer
  * Connects frontend HTML/JS with Java Backend (REST API)
  * Includes graceful offline fallback for static HR demo / testing
  */
 
 const CANDIDATE_PORTS = [8080, 8085, 9090, 8000, 5000];
+const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
+const localApiBase = LOCAL_HOSTS.has(window.location.hostname)
+  ? `http://${window.location.hostname === "::1" ? "[::1]" : window.location.hostname}:8085/api`
+  : "http://localhost:8085/api";
 
 const API_CONFIG = {
-  BASE_URL: window.ASHA_API_BASE_URL
-    ? `${window.ASHA_API_BASE_URL.replace(/\/+$/, "")}/api`
-    : (window.location.port ? `/api` : `http://localhost:8080/api`),
-  REMOTE: Boolean(window.ASHA_API_BASE_URL),
+  BASE_URL: window.AYUSH_API_BASE_URL
+    ? `${window.AYUSH_API_BASE_URL.replace(/\/+$/, "")}/api`
+    : (window.location.port === "8085" ? "/api" : (LOCAL_HOSTS.has(window.location.hostname) ? localApiBase : (window.location.port ? "/api" : localApiBase))),
+  REMOTE: Boolean(window.AYUSH_API_BASE_URL),
   TIMEOUT_MS: 2000
 };
 
@@ -63,14 +67,7 @@ async function getStatsData() {
   } catch (err) {
     console.info("Using local fallback stats (Java backend offline).");
   }
-  // Fallback data matching UI
-  return {
-    livesImpacted: "100,000+",
-    schoolsBuilt: "120+",
-    freeSurgeries: "45k+",
-    treesPlanted: "250k",
-    activeVolunteers: "1,200+"
-  };
+  return { available: false, message: "Verified impact data has not been configured." };
 }
 
 // Fetch Initiatives & Projects
@@ -90,8 +87,8 @@ async function getProjectsData() {
       title: "Shiksha Mission 2026",
       category: "Education",
       description: "Providing digital classrooms, free uniforms, and nutritious midday meals to remote rural schools.",
-      raised: 80000,
-      goal: 100000,
+      sampleData: true,
+
       image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80"
     },
     {
@@ -99,8 +96,8 @@ async function getProjectsData() {
       title: "Mobile Health Vans",
       category: "Healthcare",
       description: "Equipped medical vans bringing free doctor consultations and medicines to remote villages.",
-      raised: 45000,
-      goal: 75000,
+      sampleData: true,
+
       image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80"
     },
     {
@@ -108,8 +105,8 @@ async function getProjectsData() {
       title: "Clean Earth Drive",
       category: "Environment",
       description: "Planting native trees, restoring polluted water bodies, and advocating plastic-free urban areas.",
-      raised: 35000,
-      goal: 40000,
+      sampleData: true,
+
       image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80"
     }
   ];
@@ -130,25 +127,25 @@ async function getNewsData() {
       id: 1,
       badge: "News 1",
       meta: "PRESS RELEASE • OCT 2026",
-      title: "Annual Winter Relief Drive Launched Across 50 Districts",
-      excerpt: "Providing blankets, warm clothing, and hot meals to thousands of shelterless people during winter.",
-      details: "Local partner groups are distributing thermal kits and serving hot meals at community shelters across 50 districts. The drive focuses on reaching families and people without stable housing before the coldest weeks of winter."
+      title: "Winter Relief Program Update",
+      excerpt: "An illustrative update about community support during winter.",
+      details: "This sample article is placeholder content and should be replaced with a verified update before publication."
     },
     {
       id: 2,
       image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
       meta: "EDUCATION • SEP 2026",
       title: "New Computer Lab Opened in Rural High School",
-      excerpt: "Over 400 rural students now have daily access to high-speed internet and basic computer education.",
-      details: "The new lab has 30 computers, internet access and solar power backup. Teachers will use it for introductory digital literacy lessons, research projects and practical computer skills for students across the school."
+      excerpt: "An illustrative update about expanding access to digital learning.",
+      details: "This sample article is placeholder content and should be replaced with a verified update before publication."
     },
     {
       id: 3,
       image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
       meta: "HEALTHCARE • AUG 2026",
-      title: "1,200 Free Vision Care Camps Conducted",
+      title: "Community Vision Care Program",
       excerpt: "Restoring vision and independence to residents in remote villages through screenings, eyeglasses and referrals.",
-      details: "Mobile ophthalmology teams screened more than 5,000 residents during the campaign. People needing further care received eyeglasses or referrals for follow-up treatment, including cataract surgery."
+      details: "Mobile ophthalmology teams screened community members during the campaign. People needing further care received eyeglasses or referrals for follow-up treatment, including cataract surgery."
     },
     {
       id: 4,
@@ -156,19 +153,39 @@ async function getNewsData() {
       meta: "ENVIRONMENT • JUL 2026",
       title: "Community Rainwater Harvesting Unit Installed",
       excerpt: "A new local storage unit helps communities conserve seasonal rainwater for household and agricultural use.",
-      details: "The harvesting unit can store up to 100,000 liters of seasonal rainwater. Community volunteers are helping maintain the system and monitor stored water so it can support household needs and small-scale farming through drier months."
+      details: "This illustrative update needs verified details before publication. Community volunteers are helping maintain the system and monitor stored water so it can support household needs and small-scale farming through drier months."
     }
   ];
 }
 
 async function postApiRequest(path, payload) {
+  return sendApiRequest(path, "POST", payload);
+}
+
+async function putApiRequest(path, payload) {
+  return sendApiRequest(path, "PUT", payload);
+}
+
+async function sendApiRequest(path, method, payload) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 10000);
   try {
+    const csrfResponse = await fetch(`${API_CONFIG.BASE_URL}/auth/csrf`, {
+      credentials: "include",
+      signal: controller.signal
+    });
+    const csrf = await csrfResponse.json().catch(() => ({}));
+    if (!csrfResponse.ok) return { success: false, message: csrf.message || "Authentication service is unavailable." };
+
     const res = await fetch(`${API_CONFIG.BASE_URL}${path}`, {
-      method: "POST",
+      method,
       headers: {
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "X-XSRF-TOKEN": csrf.token || ""
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      credentials: "include",
+      signal: controller.signal
     });
 
     const result = await res.json().catch(() => ({}));
@@ -176,7 +193,19 @@ async function postApiRequest(path, payload) {
     return { success: false, message: result.message || "The request could not be completed." };
   } catch (err) {
     console.warn(`Backend request failed for ${path}.`, err);
-    return { success: false, message: "The Java backend is unavailable. Start it and try again." };
+    return { success: false, message: err.name === "AbortError" ? "The request timed out. Please try again." : "The Java backend is unavailable. Start it and try again." };
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function getApiRequest(path) {
+  try {
+    const res = await fetch(`${API_CONFIG.BASE_URL}${path}`, { credentials: "include" });
+    const data = await res.json().catch(() => ({}));
+    return { success: res.ok, status: res.status, ...data };
+  } catch (_) {
+    return { success: false, status: 0, message: "The Ayush NGO service is unavailable." };
   }
 }
 
@@ -197,9 +226,13 @@ function submitNewsletterSubscription(subscriptionData) {
 }
 
 // Expose API module
-window.AshaAPI = {
+window.AyushAPI = {
   isBackendOnline,
   getBackendPort: () => new URL(API_CONFIG.BASE_URL, window.location.href).port,
+  baseUrl: () => API_CONFIG.BASE_URL,
+  get: getApiRequest,
+  post: postApiRequest,
+  put: putApiRequest,
   getStatsData,
   getProjectsData,
   getNewsData,

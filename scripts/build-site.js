@@ -20,6 +20,6 @@ for (const directory of ["css", "js"]) {
 
 fs.writeFileSync(
   path.join(output, "js", "deploy-config.js"),
-  `// Generated during static site build.\nwindow.ASHA_API_BASE_URL = ${JSON.stringify(apiUrl)};\n`
+  `// Generated during static site build.\nwindow.AYUSH_API_BASE_URL = ${JSON.stringify(apiUrl)};\n`
 );
 console.log(apiUrl ? `Configured Java API: ${apiUrl}` : "JAVA_API_URL is empty; using local API defaults.");

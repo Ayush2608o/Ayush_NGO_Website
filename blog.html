@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Blog & Latest News | Asha Foundation</title>
-  <meta name="description" content="Updates, stories, and press releases from Asha Foundation NGO field workers.">
+  <title>Blog & Latest News | Ayush NGO</title>
+  <meta name="description" content="Updates, stories, and press releases from Ayush NGO NGO field workers.">
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
@@ -13,15 +13,16 @@
   <div class="scroll-progress-bar"></div>
 
   <!-- Top Announcement Bar -->
+  <div class="demo-notice" role="note">Demo website: sample stories and project descriptions are illustrative. Confirm organizational details before publication.</div>
   <div class="top-announcement-bar">
     <div class="container top-bar-content">
       <div class="announcement-left">
         <span class="urgent-badge">URGENT</span>
-        <span class="announcement-text">Winter Relief Drive 2026: Help us reach 10,000 underprivileged children.</span>
+        <span class="announcement-text">Explore our illustrative community programs.</span>
       </div>
       <div class="announcement-right">
         <a href="contact.html" class="announcement-link">🤝 Volunteer With Us</a>
-        <a href="tel:1800123456" class="announcement-link">📞 1800-123-456</a>
+        <span class="announcement-link">Phone contact not configured</span>
       </div>
     </div>
   </div>
@@ -29,15 +30,15 @@
   <!-- Header -->
   <header class="site-header">
     <div class="container navbar-inner">
-      <a href="index.html" class="brand-logo" aria-label="Asha Foundation Home">
+      <a href="index.html" class="brand-logo" aria-label="Ayush NGO Home">
         <div class="brand-icon-wrapper">🌱</div>
         <div class="brand-text-group">
-          <span class="brand-name">Asha Foundation</span>
+          <span class="brand-name">Ayush NGO</span>
           <span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span>
         </div>
       </a>
 
-      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu">☰</button>
+      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">☰</button>
 
       <nav>
         <ul class="nav-menu" id="navMenu">
@@ -78,9 +79,9 @@
             </div>
             <div class="blog-content">
               <span class="blog-meta">PRESS RELEASE • OCT 2026</span>
-              <h2 class="blog-title">Annual Winter Relief Drive Launched Across 50 Districts</h2>
+              <h2 class="blog-title">Annual Winter Relief Program Update</h2>
               <p class="blog-excerpt">Providing blankets, warm clothing, and hot meals to thousands of shelterless people during winter.</p>
-              <a href="#" class="blog-read-more" onclick="alert('Article detail: Annual Winter Relief Drive 2026 is actively deploying 25,000 thermal kits across northern communities.'); return false;">Read Full Article →</a>
+              <span class="blog-read-more">Sample story details require verification.</span>
             </div>
           </article>
 
@@ -92,8 +93,8 @@
             <div class="blog-content">
               <span class="blog-meta">EDUCATION • SEP 2026</span>
               <h2 class="blog-title">New Computer Lab Opened in Rural High School</h2>
-              <p class="blog-excerpt">Over 400 rural students now have daily access to high-speed internet and basic computer education.</p>
-              <a href="#" class="blog-read-more" onclick="alert('Article detail: State-of-the-art computer education laboratory inaugurated with 30 computers and solar power backup.'); return false;">Read Full Article →</a>
+              <p class="blog-excerpt">An illustrative update about expanding digital learning access in a rural school.</p>
+              <span class="blog-read-more">Sample story details require verification.</span>
             </div>
           </article>
 
@@ -104,9 +105,9 @@
             </div>
             <div class="blog-content">
               <span class="blog-meta">HEALTHCARE • AUG 2026</span>
-              <h2 class="blog-title">1,200 Free Vision Care Camps Conducted</h2>
+              <h2 class="blog-title">Community Vision Care Program</h2>
               <p class="blog-excerpt">Restoring vision and independence to elderly residents across remote backward villages through free surgeries.</p>
-              <a href="#" class="blog-read-more" onclick="alert('Article detail: Mobile ophthalmology unit screened over 5,000 citizens and provided eyeglasses and cataract surgeries.'); return false;">Read Full Article →</a>
+              <span class="blog-read-more">Sample story details require verification.</span>
             </div>
           </article>
 
@@ -119,7 +120,7 @@
               <span class="blog-meta">ENVIRONMENT • JUL 2026</span>
               <h2 class="blog-title">Community Rainwater Harvesting Unit Installed</h2>
               <p class="blog-excerpt">Conserving millions of liters of seasonal rainwater for year-round drinking and agricultural security.</p>
-              <a href="#" class="blog-read-more" onclick="alert('Article detail: Water sustainability facility installed with capacity of 100,000 liters.'); return false;">Read Full Article →</a>
+              <span class="blog-read-more">Sample story details require verification.</span>
             </div>
           </article>
         </div>
@@ -131,7 +132,7 @@
   <div class="modal-overlay" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle">
     <div class="modal-card">
       <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">✕</button>
-      
+
       <div class="modal-header">
         <div class="modal-heart-icon">💚</div>
         <h3 class="modal-title" id="donationModalTitle">Make A Donation</h3>
@@ -141,7 +142,7 @@
       <div class="modal-body">
         <div class="donation-freq-toggle">
           <button type="button" class="freq-btn active" data-freq="one-time">One-Time Gift</button>
-          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support (2x Impact)</button>
+          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support</button>
         </div>
 
         <label class="amount-label">SELECT AMOUNT ($)</label>
@@ -157,24 +158,20 @@
 
         <div class="custom-amount-group form-group">
           <label class="amount-label" for="customAmountInput">CUSTOM AMOUNT</label>
-          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" step="5">
+          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" max="1000000" step="5">
         </div>
 
-        <label class="amount-label">PAYMENT METHOD</label>
-        <div class="payment-methods-row">
-          <button type="button" class="payment-method-btn selected">💳 Card</button>
-          <button type="button" class="payment-method-btn">📱 UPI / QR</button>
-          <button type="button" class="payment-method-btn">🏦 NetBanking</button>
-        </div>
+
+        <p class="form-help">Payment processing is not configured. This form records a pending request only.</p>
 
         <div class="form-group">
           <label class="amount-label" for="donorNameInput">YOUR FULL NAME</label>
-          <input type="text" id="donorNameInput" class="form-control" placeholder="e.g. John Doe">
+          <input type="text" id="donorNameInput" class="form-control" placeholder="Your name" maxlength="120" required>
         </div>
 
         <div class="form-group" style="margin-bottom: 22px;">
           <label class="amount-label" for="donorEmailInput">EMAIL ADDRESS</label>
-          <input type="email" id="donorEmailInput" class="form-control" placeholder="e.g. john@example.com">
+          <input type="email" id="donorEmailInput" class="form-control" placeholder="you@example.org" maxlength="254" required>
         </div>
 
         <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Submit Donation Request</button>
@@ -191,16 +188,13 @@
           <div class="brand-logo" style="margin-bottom: 14px;">
             <div class="brand-icon-wrapper">🌱</div>
             <div class="brand-text-group">
-              <span class="brand-name" style="color:#fff;">Asha Foundation</span>
+              <span class="brand-name" style="color:#fff;">Ayush NGO</span>
               <span class="brand-tagline" style="color:#a7f3d0;">EMPOWERING LIVES, RESTORING HOPE</span>
             </div>
           </div>
           <p class="footer-desc">
-            Asha Foundation is a registered Section 8 non-profit organization dedicated to grassroots transformation across education, healthcare, and ecological conservation since 2012.
+            Ayush NGO is the brand used for this website demo. Official organization, program, and contact details must be verified before publication.
           </p>
-          <div style="margin-top: 14px; font-size: 0.8rem; color: #94a3b8;">
-            Tax Exemption: 80G Certified • NITI Aayog: DL/2012/0054321
-          </div>
         </div>
         <div>
           <h4 class="footer-col-title">Explore Pages</h4>
@@ -228,7 +222,7 @@
 
         <div>
           <h4 class="footer-col-title">Stay Connected</h4>
-          <p class="footer-desc">Subscribe to receive monthly field reports and transparency audits.</p>
+          <p class="footer-desc">Subscribe to receive project and website updates.</p>
           <form class="newsletter-form">
             <input type="email" class="newsletter-input" placeholder="Enter your email" required>
             <button type="submit" class="newsletter-btn">Join</button>
@@ -239,7 +233,7 @@
 
       <div class="footer-bottom-bar">
         <div class="footer-copyright">
-          © <span id="currentYear">2026</span> Asha Foundation NGO. All Rights Reserved. Designed for Maximum Impact.
+          © <span id="currentYear">2026</span> Ayush NGO. Website demonstration.
         </div>
       </div>
     </div>
@@ -248,5 +242,6 @@
   <script src="js/deploy-config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/auth-ui.js"></script>
 </body>
 </html>

@@ -1,16 +1,22 @@
 /**
- * Asha Foundation - Advanced Interactive Client Engine (Agency Grade)
- * Features: Dark/Light Mode, Currency Switcher, Live Scroll Counter,
- *           Recent Donor Ticker, Gallery Lightbox, Confetti, Scroll Progress,
- *           Volunteer Modal, Donation Request Confirmation, Newsletter Signup,
- *           FAQ Accordion, Interactive Impact Calculator, Floating WhatsApp
+ * Ayush NGO - Advanced Interactive Client Engine (Agency Grade)
+ * Shared navigation, theme and currency controls, forms, donation requests,
+ * gallery filtering and lightbox, FAQ accordion, and page status.
  */
 
 // Global State
-const AshaState = {
-  theme: localStorage.getItem("asha_theme") || "light",
-  currency: localStorage.getItem("asha_currency") || "USD",
-  rateUSDToINR: 85,
+function readPreference(key, fallback) {
+  try { return localStorage.getItem(key) || fallback; }
+  catch (_) { return fallback; }
+}
+
+function savePreference(key, value) {
+  try { localStorage.setItem(key, value); } catch (_) { /* Storage may be disabled. */ }
+}
+
+const AyushState = {
+  theme: readPreference("asha_theme", "light"),
+  currency: readPreference("asha_currency", "USD"),
   frequency: "one-time",
   activeCause: "General Fund"
 };
@@ -22,16 +28,13 @@ document.addEventListener("DOMContentLoaded", () => {
   initScrollProgress();
   initBackToTop();
   initWhatsAppFloat();
-  initLiveCounters();
   initDonationModal();
   initVolunteerModal();
   initNewsletterForm();
   initContactForm();
   initFaqAccordion();
-  initImpactSlider();
   initGalleryFilters();
   initGalleryLightbox();
-  initRecentDonorTicker();
   initYearAndBackendStatus();
 });
 
@@ -73,14 +76,14 @@ function initMobileNavigation() {
    1. Dark / Light Theme System
    -------------------------------------------------------------------------- */
 function initThemeSystem() {
-  document.documentElement.setAttribute("data-theme", AshaState.theme);
+  document.documentElement.setAttribute("data-theme", AyushState.theme);
   updateThemeButtonUI();
 
   document.querySelectorAll(".theme-toggle-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      AshaState.theme = AshaState.theme === "dark" ? "light" : "dark";
-      localStorage.setItem("asha_theme", AshaState.theme);
-      document.documentElement.setAttribute("data-theme", AshaState.theme);
+      AyushState.theme = AyushState.theme === "dark" ? "light" : "dark";
+      savePreference("asha_theme", AyushState.theme);
+      document.documentElement.setAttribute("data-theme", AyushState.theme);
       updateThemeButtonUI();
     });
   });
@@ -88,8 +91,8 @@ function initThemeSystem() {
 
 function updateThemeButtonUI() {
   document.querySelectorAll(".theme-toggle-btn").forEach(btn => {
-    btn.innerHTML = AshaState.theme === "dark" ? "☀️ Light" : "🌙 Dark";
-    btn.setAttribute("title", `Switch to ${AshaState.theme === "dark" ? "Light" : "Dark"} mode`);
+    btn.innerHTML = AyushState.theme === "dark" ? "☀️ Light" : "🌙 Dark";
+    btn.setAttribute("title", `Switch to ${AyushState.theme === "dark" ? "Light" : "Dark"} mode`);
   });
 }
 
@@ -101,8 +104,8 @@ function initCurrencySystem() {
 
   document.querySelectorAll(".currency-toggle-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      AshaState.currency = AshaState.currency === "USD" ? "INR" : "USD";
-      localStorage.setItem("asha_currency", AshaState.currency);
+      AyushState.currency = AyushState.currency === "USD" ? "INR" : "USD";
+      savePreference("asha_currency", AyushState.currency);
       updateCurrencyButtonUI();
       updateDOMCurrencyValues();
     });
@@ -113,13 +116,13 @@ function initCurrencySystem() {
 
 function updateCurrencyButtonUI() {
   document.querySelectorAll(".currency-toggle-btn").forEach(btn => {
-    btn.innerHTML = AshaState.currency === "USD" ? "💵 USD ($)" : "₹ INR (₹)";
-    btn.setAttribute("title", `Currency: ${AshaState.currency}. Click to switch.`);
+    btn.innerHTML = AyushState.currency === "USD" ? "💵 USD ($)" : "₹ INR (₹)";
+    btn.setAttribute("title", `Currency: ${AyushState.currency}. Click to switch.`);
   });
 }
 
 function updateDOMCurrencyValues() {
-  const isINR = AshaState.currency === "INR";
+  const isINR = AyushState.currency === "INR";
   const sym = isINR ? "₹" : "$";
 
   const presets = document.querySelectorAll(".preset-btn");
@@ -152,7 +155,6 @@ function updateDOMCurrencyValues() {
   }
 
   updateImpactExplainer();
-  updateImpactCalculator();
 }
 
 /* --------------------------------------------------------------------------
@@ -199,64 +201,13 @@ function initBackToTop() {
 function initWhatsAppFloat() {
   let waBtn = document.querySelector(".whatsapp-float-btn");
   if (!waBtn) {
-    waBtn = document.createElement("button");
+    waBtn = document.createElement("a");
     waBtn.className = "whatsapp-float-btn";
-    waBtn.innerHTML = `💬 <span>Helpline</span>`;
-    waBtn.setAttribute("title", "Chat with Asha Foundation Volunteer Desk");
+    waBtn.href = "contact.html";
+    waBtn.textContent = "Contact Us";
+    waBtn.setAttribute("aria-label", "Contact Ayush NGO");
     document.body.appendChild(waBtn);
   }
-
-  waBtn.addEventListener("click", () => {
-    showToast("📱 Connecting to WhatsApp Volunteer Helpline: +91 98765 43210...", "success");
-    window.open("https://api.whatsapp.com/send?phone=919876543210&text=Hello%20Asha%20Foundation%2C%20I%20would%20like%20to%20know%20more%20about%20your%20programs.", "_blank");
-  });
-}
-
-/* --------------------------------------------------------------------------
-   4. Live Number Counters with IntersectionObserver
-   -------------------------------------------------------------------------- */
-function initLiveCounters() {
-  const counterElements = document.querySelectorAll(".stat-counter, .hero-stat-number, .about-highlight-number");
-  if (!counterElements.length) return;
-
-  const observer = new IntersectionObserver((entries, obs) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCounter(entry.target);
-        obs.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.3 });
-
-  counterElements.forEach(elem => observer.observe(elem));
-}
-
-function animateCounter(element) {
-  const text = element.textContent.trim();
-  const match = text.match(/([\d,]+)/);
-  if (!match) return;
-
-  const rawNumber = parseInt(match[1].replace(/,/g, ""), 10);
-  const suffix = text.replace(match[1], "");
-  const duration = 1600;
-  const startTime = performance.now();
-
-  function update(currentTime) {
-    const elapsed = currentTime - startTime;
-    const progress = Math.min(elapsed / duration, 1);
-    const ease = 1 - Math.pow(1 - progress, 3);
-    const currentVal = Math.floor(rawNumber * ease);
-
-    element.textContent = currentVal.toLocaleString() + suffix;
-
-    if (progress < 1) {
-      requestAnimationFrame(update);
-    } else {
-      element.textContent = rawNumber.toLocaleString() + suffix;
-    }
-  }
-
-  requestAnimationFrame(update);
 }
 
 /* --------------------------------------------------------------------------
@@ -279,7 +230,7 @@ function initDonationModal() {
     trigger.addEventListener("click", (e) => {
       e.preventDefault();
       const cause = trigger.getAttribute("data-cause");
-      if (cause) AshaState.activeCause = cause;
+      if (cause) AyushState.activeCause = cause;
       openDonationModal();
     });
   });
@@ -305,7 +256,7 @@ function initDonationModal() {
     btn.addEventListener("click", () => {
       freqBtns.forEach(b => b.classList.remove("active"));
       btn.classList.add("active");
-      AshaState.frequency = btn.getAttribute("data-freq") || "one-time";
+      AyushState.frequency = btn.getAttribute("data-freq") || "one-time";
       updateImpactExplainer();
     });
   });
@@ -346,22 +297,26 @@ function initDonationModal() {
   if (proceedPayBtn) {
     proceedPayBtn.addEventListener("click", async () => {
       const amountVal = parseFloat(customAmountInput ? customAmountInput.value : 50);
-      if (!amountVal || amountVal <= 0) {
-        showToast("Please enter a valid donation amount.", "error");
+      if (!Number.isFinite(amountVal) || amountVal < 5 || amountVal > 1000000 || amountVal % 5 !== 0) {
+        showToast("Enter an amount from 5 to 1,000,000 in steps of 5.", "error");
         return;
       }
 
-      const nameVal = donorNameInput ? donorNameInput.value.trim() : "Anonymous Philanthropist";
-      const emailVal = donorEmailInput ? donorEmailInput.value.trim() : "donor@ashafoundation.org";
+      const nameVal = donorNameInput ? donorNameInput.value.trim() : "";
+      const emailVal = donorEmailInput ? donorEmailInput.value.trim() : "";
+      if (!nameVal || !emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
+        showToast("Enter your name and a valid email address.", "error");
+        return;
+      }
 
       proceedPayBtn.disabled = true;
       proceedPayBtn.textContent = "Submitting Request...";
 
-      const result = await window.AshaAPI.processDonation({
+      const result = await window.AyushAPI.processDonation({
         amount: amountVal,
-        currency: AshaState.currency,
-        frequency: AshaState.frequency,
-        cause: AshaState.activeCause,
+        currency: AyushState.currency,
+        frequency: AyushState.frequency,
+        cause: AyushState.activeCause,
         donorName: nameVal,
         donorEmail: emailVal,
         timestamp: new Date().toISOString()
@@ -375,8 +330,7 @@ function initDonationModal() {
       }
 
       closeDonationModal();
-      launchConfettiParticles();
-      const sym = AshaState.currency === "INR" ? String.fromCharCode(8377) : "$";
+      const sym = AyushState.currency === "INR" ? String.fromCharCode(8377) : "$";
       showReceiptModal(nameVal, emailVal, `${sym}${amountVal}`, result.requestId);
     });
   }
@@ -384,27 +338,7 @@ function initDonationModal() {
 
 function updateImpactExplainer() {
   const badge = document.getElementById("impactExplainerBadge");
-  const customInput = document.getElementById("customAmountInput");
-  if (!badge || !customInput) return;
-
-  const amt = parseFloat(customInput.value) || 50;
-  const isINR = AshaState.currency === "INR";
-  const normalizedUSD = isINR ? (amt / AshaState.rateUSDToINR) : amt;
-
-  let message = `🌱 [${AshaState.activeCause}] Your gift directly transforms marginalized lives.`;
-  if (normalizedUSD <= 30) {
-    message = `📚 [${AshaState.activeCause}] Provides 1 child with books, bag & school uniform for 1 year.`;
-  } else if (normalizedUSD <= 75) {
-    message = `🧥 [${AshaState.activeCause}] Provides warm winter clothes, thermal blankets & meals for 3 families.`;
-  } else {
-    message = `🏥 [${AshaState.activeCause}] Funds mobile health clinic medicine and doctor consultations for an entire village.`;
-  }
-
-  if (AshaState.frequency === "monthly") {
-    message += " (Recurring monthly 2x multiplier active!)";
-  }
-
-  badge.textContent = message;
+  if (badge) badge.textContent = "This creates a pending request only. No payment or recurring charge is made.";
 }
 
 /* --------------------------------------------------------------------------
@@ -431,13 +365,13 @@ function showReceiptModal(name, email, amountStr, requestId) {
         <p class="modal-subtitle">This confirms your request only. No payment has been collected.</p>
       </div>
       <div class="receipt-certificate">
-        <div class="receipt-header"><strong>Asha Foundation</strong></div>
+        <div class="receipt-header"><strong>Ayush NGO</strong></div>
         <div class="receipt-row"><span>Request ID:</span> <strong>${escapeHtml(requestId)}</strong></div>
         <div class="receipt-row"><span>Name:</span> <strong>${escapeHtml(name)}</strong></div>
         <div class="receipt-row"><span>Email:</span> <strong>${escapeHtml(email)}</strong></div>
         <div class="receipt-row"><span>Requested amount:</span> <strong>${escapeHtml(amountStr)}</strong></div>
-        <div class="receipt-row"><span>Cause:</span> <span>${escapeHtml(AshaState.activeCause)}</span></div>
-        <div class="receipt-row"><span>Frequency:</span> <span>${escapeHtml(AshaState.frequency)}</span></div>
+        <div class="receipt-row"><span>Cause:</span> <span>${escapeHtml(AyushState.activeCause)}</span></div>
+        <div class="receipt-row"><span>Frequency:</span> <span>${escapeHtml(AyushState.frequency)}</span></div>
         <div class="receipt-row"><span>Status:</span> <span>Pending payment</span></div>
         <div class="receipt-row"><span>Date:</span> <span>${new Date().toLocaleDateString()}</span></div>
       </div>
@@ -515,7 +449,7 @@ function initVolunteerModal() {
       btn.disabled = true;
       btn.textContent = "Registering...";
 
-      const result = await window.AshaAPI.submitVolunteerApplication({ name, email, phone, skill, city, date: new Date().toISOString() });
+      const result = await window.AyushAPI.submitVolunteerApplication({ name, email, phone, skill, city, date: new Date().toISOString() });
       if (!result.success) {
         btn.disabled = false;
         btn.textContent = "Submit Application";
@@ -527,8 +461,7 @@ function initVolunteerModal() {
       btn.textContent = "Submit Application 🚀";
       modal.classList.remove("active");
       e.target.reset();
-      launchConfettiParticles();
-      showToast(`🎉 Welcome aboard, ${name}! Your volunteer application has been approved.`, "success");
+      showToast(`Thanks, ${name}. Your volunteer application has been received.`, "success");
     });
   }
 
@@ -550,6 +483,7 @@ function initFaqAccordion() {
   faqItems.forEach(item => {
     const questionBtn = item.querySelector(".faq-question");
     if (!questionBtn) return;
+    questionBtn.setAttribute("aria-expanded", String(item.classList.contains("active")));
 
     questionBtn.addEventListener("click", () => {
       const isActive = item.classList.contains("active");
@@ -557,6 +491,10 @@ function initFaqAccordion() {
       faqItems.forEach(f => f.classList.remove("active"));
       // Toggle current
       if (!isActive) item.classList.add("active");
+      faqItems.forEach(f => {
+        const button = f.querySelector(".faq-question");
+        if (button) button.setAttribute("aria-expanded", String(f.classList.contains("active")));
+      });
     });
   });
 }
@@ -564,37 +502,6 @@ function initFaqAccordion() {
 /* --------------------------------------------------------------------------
    9. Interactive Impact Calculator (in Our Work)
    -------------------------------------------------------------------------- */
-function initImpactSlider() {
-  const slider = document.getElementById("impactCalcSlider");
-  if (!slider) return;
-
-  slider.addEventListener("input", updateImpactCalculator);
-  updateImpactCalculator();
-}
-
-function updateImpactCalculator() {
-  const slider = document.getElementById("impactCalcSlider");
-  const display = document.getElementById("calcAmountVal");
-  const childrenVal = document.getElementById("calcChildrenVal");
-  const mealsVal = document.getElementById("calcMealsVal");
-  const medicinesVal = document.getElementById("calcMedicineVal");
-
-  if (!slider || !display) return;
-
-  const rawVal = parseFloat(slider.value);
-  const isINR = AshaState.currency === "INR";
-  const sym = isINR ? "₹" : "$";
-
-  let actualAmount = isINR ? (rawVal * 80) : rawVal;
-  display.textContent = `${sym}${actualAmount.toLocaleString()}`;
-
-  const normalizedUSD = isINR ? (actualAmount / AshaState.rateUSDToINR) : actualAmount;
-
-  if (childrenVal) childrenVal.textContent = Math.max(1, Math.floor(normalizedUSD / 25)) + " Students";
-  if (mealsVal) mealsVal.textContent = Math.max(10, Math.floor(normalizedUSD * 8)) + " Meals";
-  if (medicinesVal) medicinesVal.textContent = Math.max(1, Math.floor(normalizedUSD / 40)) + " Clinics";
-}
-
 /* --------------------------------------------------------------------------
    10. Footer Newsletter Subscription
    -------------------------------------------------------------------------- */
@@ -607,12 +514,20 @@ function initNewsletterForm() {
       if (!input || !input.value.trim()) return;
 
       const email = input.value.trim();
-      const result = await window.AshaAPI.submitNewsletterSubscription({ email });
-      if (result.success) {
-        input.value = "";
-        showToast(result.message || `Thank you for subscribing, ${email}!`, "success");
-      } else {
-        showToast(result.message || "Could not subscribe. Please try again.", "error");
+      const submitButton = form.querySelector('button[type="submit"]');
+      if (submitButton) submitButton.disabled = true;
+      try {
+        const result = await window.AyushAPI.submitNewsletterSubscription({ email });
+        if (result.success) {
+          input.value = "";
+          showToast(result.message || "Your signup request was recorded.", "success");
+        } else {
+          showToast(result.message || "Could not submit your signup. Please try again.", "error");
+        }
+      } catch (_) {
+        showToast("Could not submit your signup. Please try again later.", "error");
+      } finally {
+        if (submitButton) submitButton.disabled = false;
       }
     });
   });
@@ -620,113 +535,9 @@ function initNewsletterForm() {
 /* --------------------------------------------------------------------------
    11. Confetti Particle Explosion
    -------------------------------------------------------------------------- */
-function launchConfettiParticles() {
-  let canvas = document.getElementById("confettiCanvas");
-  if (!canvas) {
-    canvas = document.createElement("canvas");
-    canvas.id = "confettiCanvas";
-    document.body.appendChild(canvas);
-  }
-
-  const ctx = canvas.getContext("2d");
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  const particles = [];
-  const colors = ["#00a86b", "#34d399", "#38bdf8", "#f59e0b", "#ec4899", "#8b5cf6"];
-
-  for (let i = 0; i < 90; i++) {
-    particles.push({
-      x: canvas.width / 2,
-      y: canvas.height / 2,
-      vx: (Math.random() - 0.5) * 16,
-      vy: (Math.random() - 0.8) * 18,
-      size: Math.random() * 8 + 4,
-      color: colors[Math.floor(Math.random() * colors.length)],
-      alpha: 1,
-      rotation: Math.random() * 360,
-      vRot: (Math.random() - 0.5) * 10
-    });
-  }
-
-  let animationFrame;
-  function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    let alive = false;
-
-    particles.forEach(p => {
-      p.x += p.vx;
-      p.y += p.vy;
-      p.vy += 0.4;
-      p.alpha -= 0.014;
-      p.rotation += p.vRot;
-
-      if (p.alpha > 0) {
-        alive = true;
-        ctx.save();
-        ctx.globalAlpha = Math.max(0, p.alpha);
-        ctx.translate(p.x, p.y);
-        ctx.rotate((p.rotation * Math.PI) / 180);
-        ctx.fillStyle = p.color;
-        ctx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size);
-        ctx.restore();
-      }
-    });
-
-    if (alive) {
-      animationFrame = requestAnimationFrame(animate);
-    } else {
-      cancelAnimationFrame(animationFrame);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-  }
-
-  animate();
-}
-
 /* --------------------------------------------------------------------------
    12. Live Recent Donor Ticker
    -------------------------------------------------------------------------- */
-function initRecentDonorTicker() {
-  const donors = [
-    { name: "Priya Sharma", city: "New Delhi", amount: "$50", cause: "Shiksha Mission 2026", time: "2 mins ago" },
-    { name: "Rahul Verma", city: "Mumbai", amount: "$100", cause: "Mobile Health Vans", time: "5 mins ago" },
-    { name: "Ananya Deshmukh", city: "Pune", amount: "$35", cause: "Clean Earth Drive", time: "8 mins ago" },
-    { name: "Siddharth Rao", city: "Bengaluru", amount: "$75", cause: "Education For All", time: "12 mins ago" },
-    { name: "Kavita Nair", city: "Kochi", amount: "$50", cause: "Winter Relief Package", time: "15 mins ago" }
-  ];
-
-  let ticker = document.querySelector(".donor-ticker");
-  if (!ticker) {
-    ticker = document.createElement("div");
-    ticker.className = "donor-ticker";
-    document.body.appendChild(ticker);
-  }
-
-  let index = 0;
-  function showNextDonor() {
-    const d = donors[index % donors.length];
-    index++;
-
-    ticker.innerHTML = `
-      <div class="donor-ticker-avatar">💚</div>
-      <div class="donor-ticker-content">
-        <div class="donor-ticker-name">${d.name} (${d.city})</div>
-        <div class="donor-ticker-details">Donated <strong>${d.amount}</strong> to ${d.cause} • <em>${d.time}</em></div>
-      </div>
-    `;
-
-    ticker.classList.add("show");
-
-    setTimeout(() => {
-      ticker.classList.remove("show");
-    }, 5500);
-  }
-
-  setTimeout(showNextDonor, 4000);
-  setInterval(showNextDonor, 18000);
-}
-
 /* --------------------------------------------------------------------------
    13. Fullscreen Gallery Lightbox
    -------------------------------------------------------------------------- */
@@ -751,18 +562,82 @@ function initGalleryLightbox() {
   const modalImg = modal.querySelector(".lightbox-image");
   const caption = modal.querySelector(".lightbox-caption");
   const closeBtn = modal.querySelector(".lightbox-close");
+  let returnFocusTo = null;
 
   galleryItems.forEach(img => {
-    img.parentElement.addEventListener("click", () => {
+    const item = img.parentElement;
+    const overlay = item.querySelector(".gallery-item-overlay");
+    const inner = document.createElement("div");
+    const front = document.createElement("div");
+    const back = document.createElement("div");
+    const openButton = document.createElement("button");
+    const title = img.alt || "Gallery photo";
+
+    inner.className = "gallery-card-inner";
+    front.className = "gallery-card-face gallery-card-front";
+    back.className = "gallery-card-face gallery-card-back";
+    front.setAttribute("role", "button");
+    front.setAttribute("tabindex", "0");
+    front.setAttribute("aria-label", `Flip card for ${title}`);
+    front.setAttribute("aria-expanded", "false");
+    back.setAttribute("aria-hidden", "true");
+    openButton.className = "gallery-open-button";
+    openButton.type = "button";
+    openButton.tabIndex = -1;
+    openButton.textContent = "Open image";
+    back.append(Object.assign(document.createElement("p"), { textContent: title }), openButton);
+    if (overlay) front.append(img, overlay);
+    else front.append(img);
+    inner.append(front, back);
+    item.replaceChildren(inner);
+    item.setAttribute("role", "group");
+    item.setAttribute("aria-label", title);
+
+    const flip = isFlipped => {
+      item.classList.toggle("is-flipped", isFlipped);
+      front.setAttribute("aria-expanded", String(isFlipped));
+      back.setAttribute("aria-hidden", String(!isFlipped));
+      openButton.tabIndex = isFlipped ? 0 : -1;
+      if (isFlipped) openButton.focus();
+      else front.focus();
+    };
+    const open = () => {
+      returnFocusTo = openButton;
       modalImg.src = img.src;
-      caption.textContent = img.alt || "Asha Foundation Grassroots Initiative";
+      modalImg.alt = title;
+      caption.textContent = title;
       modal.classList.add("active");
+      closeBtn.focus();
+    };
+
+    front.addEventListener("click", () => flip(true));
+    front.addEventListener("keydown", event => {
+      if (event.key === "Enter" || event.key === " ") {
+        event.preventDefault();
+        flip(true);
+      }
     });
+    back.addEventListener("click", event => {
+      if (event.target !== openButton) flip(false);
+    });
+    back.addEventListener("keydown", event => {
+      if (event.key === "Escape") flip(false);
+    });
+    openButton.addEventListener("click", open);
   });
 
-  closeBtn.addEventListener("click", () => modal.classList.remove("active"));
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  const closeModal = () => {
+    modal.classList.remove("active");
+    if (returnFocusTo) returnFocusTo.focus();
+  };
+  closeBtn.addEventListener("click", closeModal);
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && modal.classList.contains("active")) closeModal();
+  });
   modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.classList.remove("active");
+    if (e.target === modal) closeModal();
   });
 }
 
@@ -790,8 +665,12 @@ function initContactForm() {
       submittedAt: new Date().toISOString()
     };
 
-    if (!payload.name || !payload.email || !payload.message) {
-      showToast("Please fill in your name, email, and message.", "error");
+    if (!payload.name || !payload.email || !payload.subject || !payload.message) {
+      showToast("Please fill in your name, email, subject, and message.", "error");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(payload.email) || payload.name.length > 120 || payload.subject.length > 200 || payload.message.length > 4000) {
+      showToast("Check your email and keep the message within the allowed length.", "error");
       return;
     }
 
@@ -800,15 +679,22 @@ function initContactForm() {
       submitBtn.innerHTML = 'Sending... ✈';
     }
 
-    const response = await window.AshaAPI.submitContactMessage(payload);
-
-    if (submitBtn) {
-      submitBtn.disabled = false;
-      submitBtn.innerHTML = 'Send Message ✈';
+    try {
+      const response = await window.AyushAPI.submitContactMessage(payload);
+      if (!response.success) {
+        showToast(response.message || "Your message could not be sent. Please try again.", "error");
+        return;
+      }
+      showToast(response.message || "Your message has been received.", "success");
+      contactForm.reset();
+    } catch (_) {
+      showToast("Your message could not be sent. Please try again later.", "error");
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = 'Send Message ✈';
+      }
     }
-
-    showToast(response.message || "Thank you! Your inquiry has been registered.", "success");
-    contactForm.reset();
   });
 }
 
@@ -851,7 +737,12 @@ function showToast(message, type = "success") {
   }
 
   toast.className = `toast-notice ${type === "error" ? "toast-error" : "toast-success"} show`;
-  toast.innerHTML = `<span>${type === "error" ? "⚠️" : "✅"}</span> <span>${message}</span>`;
+  toast.replaceChildren();
+  const icon = document.createElement("span");
+  icon.textContent = type === "error" ? "⚠️" : "✅";
+  const text = document.createElement("span");
+  text.textContent = message;
+  toast.append(icon, document.createTextNode(" "), text);
 
   setTimeout(() => {
     toast.classList.remove("show");
@@ -867,14 +758,14 @@ async function initYearAndBackendStatus() {
     yearSpan.textContent = new Date().getFullYear();
   }
 
-  if (window.AshaAPI) {
-    const isOnline = await window.AshaAPI.isBackendOnline();
+  if (window.AyushAPI) {
+    const isOnline = await window.AyushAPI.isBackendOnline();
     const statusElem = document.getElementById("backendStatusIndicator");
     if (statusElem) {
       if (isOnline) {
         statusElem.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;margin-right:6px;"></span>Java Backend: <strong>Live Connected</strong>`;
       } else {
-        statusElem.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:6px;"></span>Java Backend: <strong>Client Offline Mode (100% Functional)</strong>`;
+      statusElem.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:6px;"></span>Java Backend: <strong>Offline</strong>`;
       }
     }
   }

@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My profile | Ayush NGO</title><meta name="description" content="Manage your Ayush NGO account profile.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="account-page">
+  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">🌱</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span></span></a><nav class="account-header-nav"><a href="dashboard.html">My donations</a><button type="button" id="logoutButton" class="account-text-button">Sign out</button></nav></header>
+  <main class="account-shell account-shell-wide">
+    <section class="account-card account-card-wide">
+      <div class="profile-heading"><div class="profile-avatar" id="profileAvatar" aria-hidden="true">A</div><div><p class="account-eyebrow">YOUR ACCOUNT</p><h1 id="profileTitle">My profile</h1><p id="memberSince" class="account-intro">Loading profile…</p></div></div>
+      <div id="profileAlert" class="account-status" role="status" aria-live="polite"></div>
+      <form id="profileForm" class="account-form account-profile-form" novalidate>
+        <label for="profileName">Full name</label><input id="profileName" type="text" maxlength="120" autocomplete="name" required>
+        <label for="profileEmail">Verified email</label><input id="profileEmail" type="email" readonly aria-describedby="emailVerificationState">
+        <p id="emailVerificationState" class="account-hint"></p>
+        <label for="profilePhone">Phone number</label><input id="profilePhone" type="tel" maxlength="40" autocomplete="tel">
+        <label for="profileAddress">Address <span class="account-optional">Optional</span></label><textarea id="profileAddress" rows="3" maxlength="500" autocomplete="street-address"></textarea>
+        <div class="account-actions"><button class="btn btn-primary" type="submit">Save changes</button><a class="btn btn-secondary" href="dashboard.html">View donation history</a></div>
+      </form>
+    </section>
+  </main>
+  <script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/auth-ui.js"></script>
+</body>
+</html>

@@ -2,6 +2,7 @@
 /data/
 /bin/
 /dist/
+/backend/target/
 *.class
 *.log
 .env

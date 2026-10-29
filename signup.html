@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Create account | Ayush NGO</title><meta name="description" content="Create an Ayush NGO account to manage your profile and donation requests.">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="account-page">
+  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">🌱</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span></span></a><a href="login.html" class="btn btn-outline-white account-header-link">Sign in</a></header>
+  <main class="account-shell">
+    <section class="account-card account-card-wide" aria-labelledby="signupTitle">
+      <a class="account-back-link" href="index.html">← Back to website</a>
+      <p class="account-eyebrow">JOIN OUR COMMUNITY</p><h1 id="signupTitle">Create your account</h1>
+      <p class="account-intro">Your profile keeps your personal details and donation history together.</p>
+      <form id="signupForm" class="account-form" novalidate>
+        <label for="signupName">Full name</label><input id="signupName" name="fullName" type="text" autocomplete="name" maxlength="120" required>
+        <label for="signupEmail">Email address</label><input id="signupEmail" name="email" type="email" autocomplete="email" maxlength="254" required>
+        <label for="signupPhone">Phone number <span class="account-optional">Optional</span></label><input id="signupPhone" name="phone" type="tel" autocomplete="tel" maxlength="40">
+        <label for="signupPassword">Password</label><div class="password-field"><input id="signupPassword" name="password" type="password" autocomplete="new-password" minlength="12" maxlength="72" required><button type="button" class="password-toggle" data-password-toggle="signupPassword" aria-label="Show password">Show</button></div>
+        <p class="account-hint">Use at least 12 characters with upper and lower case letters, a number, and a symbol.</p>
+        <label for="signupConfirm">Confirm password</label><div class="password-field"><input id="signupConfirm" name="confirmPassword" type="password" autocomplete="new-password" minlength="12" maxlength="72" required><button type="button" class="password-toggle" data-password-toggle="signupConfirm" aria-label="Show password">Show</button></div>
+        <label class="account-checkbox account-terms"><input id="acceptTerms" type="checkbox" required><span>I agree to the <a href="terms.html">Terms</a> and <a href="privacy.html">Privacy Policy</a>.</span></label>
+        <button class="btn btn-primary account-submit" type="submit">Create account</button>
+        <p class="account-status" id="signupStatus" role="status" aria-live="polite"></p>
+      </form>
+      <div class="account-divider"><span>or</span></div>
+      <a id="googleSignup" class="btn btn-google" href="#" hidden>Continue with Google</a>
+      <p class="account-switch">Already registered? <a href="login.html">Sign in</a></p>
+      <p class="account-demo-note">Create an account with your email and password, then sign in any time.</p>
+    </section>
+  </main>
+  <script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/auth-ui.js"></script>
+</body>
+</html>

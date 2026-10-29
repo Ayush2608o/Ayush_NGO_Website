@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>All Pages Showcase | Asha Foundation NGO</title>
+  <title>All Pages Showcase | Ayush NGO NGO</title>
   <meta name="description" content="Complete Website Page Layouts - Interactive portfolio showcase of all 6 NGO pages.">
   <link rel="stylesheet" href="css/style.css">
 </head>
@@ -13,15 +13,16 @@
   <div class="scroll-progress-bar"></div>
 
   <!-- Top Announcement Bar -->
+  <div class="demo-notice" role="note">Demo website: sample stories and project descriptions are illustrative. Confirm organizational details before publication.</div>
   <div class="top-announcement-bar">
     <div class="container top-bar-content">
       <div class="announcement-left">
         <span class="urgent-badge">URGENT</span>
-        <span class="announcement-text">Winter Relief Drive 2026: Help us reach 10,000 underprivileged children.</span>
+        <span class="announcement-text">Explore our illustrative community programs.</span>
       </div>
       <div class="announcement-right">
         <a href="#" class="announcement-link" data-action="volunteer">🤝 Volunteer With Us</a>
-        <a href="tel:1800123456" class="announcement-link">📞 1800-123-456</a>
+        <span class="announcement-link">Phone contact not configured</span>
       </div>
     </div>
   </div>
@@ -29,15 +30,15 @@
   <!-- Header -->
   <header class="site-header">
     <div class="container navbar-inner">
-      <a href="index.html" class="brand-logo" aria-label="Asha Foundation Home">
+      <a href="index.html" class="brand-logo" aria-label="Ayush NGO Home">
         <div class="brand-icon-wrapper">🌱</div>
         <div class="brand-text-group">
-          <span class="brand-name">Asha Foundation</span>
+          <span class="brand-name">Ayush NGO</span>
           <span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span>
         </div>
       </a>
 
-      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu">☰</button>
+      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">☰</button>
 
       <nav>
         <ul class="nav-menu" id="navMenu">
@@ -106,7 +107,7 @@
           </div>
           <div class="showcase-preview-body">
             <div class="showcase-preview-mockup">
-              <div style="height:22px; background:#0f365e; border-radius:4px; margin-bottom:4px; color:#fff; font-size:10px; display:flex; align-items:center; padding:0 6px;">14+ Years Service</div>
+              <div style="height:22px; background:#0f365e; border-radius:4px; margin-bottom:4px; color:#fff; font-size:10px; display:flex; align-items:center; padding:0 6px;">Our Story Service</div>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:4px;">
                 <div style="background:#f1f5f9; height:35px; border-radius:3px; border-left:3px solid #0284c7;"></div>
                 <div style="background:#f1f5f9; height:35px; border-radius:3px; border-left:3px solid #10b981;"></div>
@@ -209,7 +210,7 @@
   <div class="modal-overlay" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle">
     <div class="modal-card">
       <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">✕</button>
-      
+
       <div class="modal-header">
         <div class="modal-heart-icon">💚</div>
         <h3 class="modal-title" id="donationModalTitle">Make A Donation</h3>
@@ -219,7 +220,7 @@
       <div class="modal-body">
         <div class="donation-freq-toggle">
           <button type="button" class="freq-btn active" data-freq="one-time">One-Time Gift</button>
-          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support (2x Impact)</button>
+          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support</button>
         </div>
 
         <label class="amount-label">SELECT AMOUNT ($)</label>
@@ -235,24 +236,20 @@
 
         <div class="custom-amount-group form-group">
           <label class="amount-label" for="customAmountInput">CUSTOM AMOUNT</label>
-          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" step="5">
+          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" max="1000000" step="5">
         </div>
 
-        <label class="amount-label">PAYMENT METHOD</label>
-        <div class="payment-methods-row">
-          <button type="button" class="payment-method-btn selected">💳 Card</button>
-          <button type="button" class="payment-method-btn">📱 UPI / QR</button>
-          <button type="button" class="payment-method-btn">🏦 NetBanking</button>
-        </div>
+
+        <p class="form-help">Payment processing is not configured. This form records a pending request only.</p>
 
         <div class="form-group">
           <label class="amount-label" for="donorNameInput">YOUR FULL NAME</label>
-          <input type="text" id="donorNameInput" class="form-control" placeholder="e.g. John Doe">
+          <input type="text" id="donorNameInput" class="form-control" placeholder="Your name" maxlength="120" required>
         </div>
 
         <div class="form-group" style="margin-bottom: 22px;">
           <label class="amount-label" for="donorEmailInput">EMAIL ADDRESS</label>
-          <input type="email" id="donorEmailInput" class="form-control" placeholder="e.g. john@example.com">
+          <input type="email" id="donorEmailInput" class="form-control" placeholder="you@example.org" maxlength="254" required>
         </div>
 
         <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Submit Donation Request</button>
@@ -268,16 +265,13 @@
           <div class="brand-logo" style="margin-bottom: 14px;">
             <div class="brand-icon-wrapper">🌱</div>
             <div class="brand-text-group">
-              <span class="brand-name" style="color:#fff;">Asha Foundation</span>
+              <span class="brand-name" style="color:#fff;">Ayush NGO</span>
               <span class="brand-tagline" style="color:#a7f3d0;">EMPOWERING LIVES, RESTORING HOPE</span>
             </div>
           </div>
           <p class="footer-desc">
-            Asha Foundation is a registered Section 8 non-profit organization dedicated to grassroots transformation across education, healthcare, and ecological conservation since 2012.
+            Ayush NGO is the brand used for this website demo. Official organization, program, and contact details must be verified before publication.
           </p>
-          <div style="margin-top: 14px; font-size: 0.8rem; color: #94a3b8;">
-            Tax Exemption: 80G Certified • NITI Aayog: DL/2012/0054321
-          </div>
         </div>
 
         <div>
@@ -306,7 +300,7 @@
 
         <div>
           <h4 class="footer-col-title">Stay Connected</h4>
-          <p class="footer-desc">Subscribe to receive monthly field reports and transparency audits.</p>
+          <p class="footer-desc">Subscribe to receive project and website updates.</p>
           <form class="newsletter-form">
             <input type="email" class="newsletter-input" placeholder="Enter your email" required>
             <button type="submit" class="newsletter-btn">Join</button>
@@ -317,14 +311,9 @@
 
       <div class="footer-bottom-bar">
         <div class="footer-copyright">
-          © <span id="currentYear">2026</span> Asha Foundation NGO. All Rights Reserved. Designed for Maximum Impact.
+          © <span id="currentYear">2026</span> Ayush NGO. Website demonstration.
         </div>
-        <div class="footer-social-links">
-          <a href="#" class="social-icon-btn" aria-label="Twitter">𝕏</a>
-          <a href="#" class="social-icon-btn" aria-label="Facebook">f</a>
-          <a href="#" class="social-icon-btn" aria-label="Instagram">📷</a>
-          <a href="#" class="social-icon-btn" aria-label="LinkedIn">in</a>
-        </div>
+
       </div>
     </div>
   </footer>
@@ -332,5 +321,6 @@
   <script src="js/deploy-config.js"></script>
   <script src="js/api.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/auth-ui.js"></script>
 </body>
 </html>
