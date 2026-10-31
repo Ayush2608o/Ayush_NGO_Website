@@ -30,8 +30,10 @@ New accounts are stored in `%USERPROFILE%\.ayush-ngo-data\accounts.tsv`. Passwor
 - Signed-in users can change their password by confirming the current password in `profile.html`.
 - If email recovery is not configured, run `scripts/reset-account-password.ps1` locally to choose a new account password without displaying it in the terminal.
 - Donation history matches donation requests by the signed-in account's email address.
-- Donation requests remain `PENDING_PAYMENT`. The site does not collect money or claim that a payment succeeded.
-- Successful totals only include records explicitly marked `SUCCEEDED`; no payment provider or verified payment webhook is configured.
+- Razorpay one-time checkout is available when `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` are configured in the server environment. The backend creates orders, checks the checkout HMAC, confirms payment capture with Razorpay, and only then records `SUCCEEDED`.
+- This website uses Razorpay Standard Payment Gateway credentials: Key ID plus Key Secret. OAuth Client ID and Client Secret are not interchangeable with these API credentials.
+- Monthly recurring payments are not enabled. USD checkout also depends on the Razorpay account supporting USD; INR is the standard supported setup for this site.
+- Never commit payment credentials. For local test checkout, run `scripts/run-backend-with-razorpay.ps1`; it prompts for the Key ID and reads the Key Secret without echoing it or saving it. For Render, add `RAZORPAY_KEY_ID` and `RAZORPAY_KEY_SECRET` as private Environment Variables on the web service and redeploy. The `render.yaml` placeholders contain no key values. Use Razorpay test keys for testing and live keys only after account activation.
 - Contact, volunteer, and newsletter forms are saved in private JSON Lines files; the Java server does not send email.
 - Email-based password recovery, email verification, Google sign in, and administrator access are not configured in the Java SE server.
 
@@ -42,14 +44,15 @@ New accounts are stored in `%USERPROFILE%\.ayush-ngo-data\accounts.tsv`. Passwor
 - `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `POST /api/auth/change-password`
 - `GET /api/profile/me`, `PUT /api/profile/me`
 - `GET /api/donations/me`, `GET /api/donations/me/summary`
-- `POST /api/contact`, `POST /api/newsletter`, `POST /api/volunteer`, `POST /api/donate`
+- `POST /api/contact`, `POST /api/newsletter`, `POST /api/volunteer`
+- `GET /api/payment/config`, `POST /api/payment/order`, `POST /api/payment/verify`
 - `GET /api/stats`, `GET /api/projects`, `GET /api/news`, `GET /api/donations/recent`
 
 ## Hosting notes
 
-Netlify builds the static frontend with `node scripts/build-site.js`. Set `JAVA_API_URL` in the Netlify build environment to the public HTTPS base URL of a separately hosted Java API. Do not place credentials in frontend configuration. The API's CORS origin must be set to the exact deployed website origin.
+Netlify builds the static frontend with `node scripts/build-site.js`. Set `JAVA_API_URL` in the Netlify build environment to the public HTTPS base URL of the Java API. Set `FRONTEND_ORIGIN=https://ayushngo.netlify.app` on the API service. Razorpay secrets belong on the Java API service in Render, not in Netlify frontend variables or `deploy-config.js`; the existing Java backend handles order creation and verification server-side.
 
-`backend/Dockerfile` and `render.yaml` provide the Java SE API container setup. Configure a private persistent data directory for account and form records. Production use still requires a real email verification and reset flow, a supported database, rate limiting, and a legitimate payment provider with server-side verification.
+`backend/Dockerfile` and `render.yaml` provide the Java SE API container setup. Configure a private persistent data directory for account and form records. Production use still requires a real email verification and reset flow, a supported database, rate limiting, and a configured Razorpay account. Recurring payments are not implemented.
 
 ## Content and data
 

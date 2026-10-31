@@ -2420,6 +2420,12 @@ textarea.form-control {
   box-shadow: 0 2px 8px var(--color-primary-glow);
 }
 
+.freq-btn:disabled {
+  color: var(--color-text-muted);
+  cursor: not-allowed;
+  opacity: 0.62;
+}
+
 .amount-label {
   font-size: 0.76rem;
   font-weight: 800;
@@ -2432,7 +2438,7 @@ textarea.form-control {
 
 .preset-amounts-row {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 12px;
   margin-bottom: 14px;
 }
@@ -2970,6 +2976,7 @@ textarea.form-control {
 }
 
 @media (max-width: 540px) {
+  .preset-amounts-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .earth-scene { --earth-size: 238px; height: 380px; }
   .earth-orbit-link { gap: 6px; min-height: 40px; padding: 6px 10px 6px 7px; font-size: 0.72rem; }
   .orbit-link-icon { width: 23px; height: 23px; }

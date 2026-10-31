@@ -214,7 +214,15 @@ function submitContactMessage(contactData) {
 }
 
 function processDonation(donationData) {
-  return postApiRequest("/donate", donationData);
+  return postApiRequest("/payment/order", donationData);
+}
+
+function verifyDonationPayment(paymentData) {
+  return postApiRequest("/payment/verify", paymentData);
+}
+
+function getPaymentConfig() {
+  return getApiRequest("/payment/config");
 }
 
 function submitVolunteerApplication(applicationData) {
@@ -238,6 +246,8 @@ window.AyushAPI = {
   getNewsData,
   submitContactMessage,
   processDonation,
+  verifyDonationPayment,
+  getPaymentConfig,
   submitVolunteerApplication,
   submitNewsletterSubscription
 };

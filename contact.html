@@ -156,11 +156,11 @@
           <!-- FAQ 1 -->
           <div class="faq-item active">
             <button class="faq-question">
-              <span>How does this donation demo work?</span>
+              <span>How are online donations processed?</span>
               <span class="faq-icon">+</span>
             </button>
             <div class="faq-answer">
-              The form records a pending request only. This demo has no verified financial records, payment processing, or audit reports.
+              One-time donations open in Razorpay Checkout. A donation is marked successful only after the server verifies the payment signature and captured status. Monthly recurring donations are not enabled.
             </div>
           </div>
 
@@ -215,14 +215,16 @@
       <div class="modal-body">
         <div class="donation-freq-toggle">
           <button type="button" class="freq-btn active" data-freq="one-time">One-Time Gift</button>
-          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support</button>
+          <button type="button" class="freq-btn" data-freq="monthly" disabled aria-describedby="monthlySoonNote">Monthly Support</button>
         </div>
+        <p class="form-help" id="monthlySoonNote">Monthly donations are coming soon.</p>
 
-        <label class="amount-label">SELECT AMOUNT ($)</label>
+        <label class="amount-label">SELECT AMOUNT (₹)</label>
         <div class="preset-amounts-row">
-          <button type="button" class="preset-btn" data-amount="25">$25</button>
-          <button type="button" class="preset-btn selected" data-amount="50">$50</button>
-          <button type="button" class="preset-btn" data-amount="100">$100</button>
+          <button type="button" class="preset-btn" data-amount="500">₹500</button>
+          <button type="button" class="preset-btn" data-amount="1000">₹1,000</button>
+          <button type="button" class="preset-btn selected" data-amount="2500">₹2,500</button>
+          <button type="button" class="preset-btn" data-amount="5000">₹5,000</button>
         </div>
 
         <div class="impact-explainer-badge" id="impactExplainerBadge">
@@ -231,11 +233,11 @@
 
         <div class="custom-amount-group form-group">
           <label class="amount-label" for="customAmountInput">CUSTOM AMOUNT</label>
-          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" max="1000000" step="5">
+          <input type="number" id="customAmountInput" class="form-control" value="2500" min="1" max="1000000" step="1">
         </div>
 
 
-        <p class="form-help">Payment processing is not configured. This form records a pending request only.</p>
+        <p class="form-help">Secure one-time payments are processed by Razorpay. Monthly recurring payments are not enabled.</p>
 
         <div class="form-group">
           <label class="amount-label" for="donorNameInput">YOUR FULL NAME</label>
@@ -247,7 +249,12 @@
           <input type="email" id="donorEmailInput" class="form-control" placeholder="you@example.org" maxlength="254" required>
         </div>
 
-        <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Submit Donation Request</button>
+        <div class="form-group" style="margin-bottom: 22px;">
+          <label class="amount-label" for="donorPhoneInput">PHONE NUMBER</label>
+          <input type="tel" id="donorPhoneInput" class="form-control" placeholder="+91 98765 43210" maxlength="20" autocomplete="tel" required>
+        </div>
+
+        <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Donate Securely</button>
       </div>
     </div>
   </div>

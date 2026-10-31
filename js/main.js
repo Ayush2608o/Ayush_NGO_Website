@@ -122,39 +122,20 @@ function updateCurrencyButtonUI() {
 }
 
 function updateDOMCurrencyValues() {
-  const isINR = AyushState.currency === "INR";
-  const sym = isINR ? "₹" : "$";
-
   const presets = document.querySelectorAll(".preset-btn");
-  if (presets.length >= 3) {
-    if (isINR) {
-      presets[0].textContent = "₹2,000";
-      presets[0].setAttribute("data-amount", "2000");
-      presets[1].textContent = "₹4,000";
-      presets[1].setAttribute("data-amount", "4000");
-      presets[2].textContent = "₹8,000";
-      presets[2].setAttribute("data-amount", "8000");
-    } else {
-      presets[0].textContent = "$25";
-      presets[0].setAttribute("data-amount", "25");
-      presets[1].textContent = "$50";
-      presets[1].setAttribute("data-amount", "50");
-      presets[2].textContent = "$100";
-      presets[2].setAttribute("data-amount", "100");
-    }
-  }
+  const donationAmounts = [500, 1000, 2500, 5000];
+  presets.forEach((button, index) => {
+    const amount = donationAmounts[index];
+    if (!amount) return;
+    button.dataset.amount = String(amount);
+    button.textContent = `\u20B9${amount.toLocaleString("en-IN")}`;
+  });
 
   const customInput = document.getElementById("customAmountInput");
-  if (customInput) {
-    customInput.value = isINR ? "4000" : "50";
-  }
+  if (customInput) customInput.min = "1";
 
-  const amountLabel = document.querySelector(".amount-label");
-  if (amountLabel) {
-    amountLabel.textContent = `SELECT AMOUNT (${sym})`;
-  }
-
-  updateImpactExplainer();
+  const amountLabel = document.querySelector("#donationModal .preset-amounts-row")?.previousElementSibling;
+  if (amountLabel) amountLabel.textContent = "SELECT AMOUNT (\u20B9)";
 }
 
 /* --------------------------------------------------------------------------
@@ -223,6 +204,7 @@ function initDonationModal() {
   const proceedPayBtn = document.getElementById("proceedPayBtn");
   const donorNameInput = document.getElementById("donorNameInput");
   const donorEmailInput = document.getElementById("donorEmailInput");
+  const donorPhoneInput = document.getElementById("donorPhoneInput");
   const freqBtns = document.querySelectorAll(".freq-btn");
   const paymentMethods = document.querySelectorAll(".payment-method-btn");
 
@@ -297,54 +279,126 @@ function initDonationModal() {
   if (proceedPayBtn) {
     proceedPayBtn.addEventListener("click", async () => {
       const amountVal = parseFloat(customAmountInput ? customAmountInput.value : 50);
-      if (!Number.isFinite(amountVal) || amountVal < 5 || amountVal > 1000000 || amountVal % 5 !== 0) {
-        showToast("Enter an amount from 5 to 1,000,000 in steps of 5.", "error");
+      if (!Number.isFinite(amountVal) || !Number.isInteger(amountVal) || amountVal < 1 || amountVal > 1000000) {
+        showToast("Enter a valid whole-rupee amount between ₹1 and ₹10,00,000.", "error");
         return;
       }
 
       const nameVal = donorNameInput ? donorNameInput.value.trim() : "";
       const emailVal = donorEmailInput ? donorEmailInput.value.trim() : "";
-      if (!nameVal || !emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-        showToast("Enter your name and a valid email address.", "error");
+      const phoneVal = donorPhoneInput ? donorPhoneInput.value.trim() : "";
+      if (!nameVal || !emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)
+          || !/^[+0-9(). -]{7,20}$/.test(phoneVal) || phoneVal.replace(/\D/g, "").length < 7) {
+        showToast("Enter your name, a valid email, and a valid phone number.", "error");
         return;
       }
 
       proceedPayBtn.disabled = true;
-      proceedPayBtn.textContent = "Submitting Request...";
-
-      const result = await window.AyushAPI.processDonation({
-        amount: amountVal,
-        currency: AyushState.currency,
-        frequency: AyushState.frequency,
-        cause: AyushState.activeCause,
-        donorName: nameVal,
-        donorEmail: emailVal,
-        timestamp: new Date().toISOString()
-      });
-
-      proceedPayBtn.disabled = false;
-      proceedPayBtn.textContent = "Submit Donation Request";
-      if (!result.success || !result.requestId) {
-        showToast(result.message || "Could not submit your donation request. Please try again.", "error");
-        return;
+      proceedPayBtn.textContent = "Processing...";
+      let checkoutOpened = false;
+      let paymentFinished = false;
+      try {
+        if (AyushState.frequency !== "one-time") {
+          showToast("Monthly donations are coming soon.", "error");
+          return;
+        }
+        const config = await window.AyushAPI.getPaymentConfig();
+        if (!config.success || !config.enabled || !config.keyId) {
+          showToast("Online payments are not configured. Please contact the website administrator.", "error");
+          return;
+        }
+        if (!(await loadRazorpayCheckout())) {
+          showToast("Secure checkout could not load. Check your connection and try again.", "error");
+          return;
+        }
+        const order = await window.AyushAPI.processDonation({
+          amount: amountVal,
+          currency: "INR",
+          frequency: "one-time",
+          cause: AyushState.activeCause || "General support",
+          donorName: nameVal,
+          donorEmail: emailVal,
+          donorPhone: phoneVal
+        });
+        if (!order.success || !order.orderId) {
+          showToast(order.message || "Could not start payment. Please try again.", "error");
+          return;
+        }
+        const checkout = new window.Razorpay({
+          key: order.keyId,
+          amount: order.amount,
+          currency: order.currency,
+          name: "Ayush NGO",
+          description: "Donation to Ayush NGO",
+          order_id: order.orderId,
+          prefill: { name: nameVal, email: emailVal, contact: phoneVal },
+          theme: { color: "#15803d" },
+          handler: async payment => {
+            paymentFinished = true;
+            proceedPayBtn.disabled = true;
+            proceedPayBtn.textContent = "Verifying payment...";
+            try {
+              const verified = await window.AyushAPI.verifyDonationPayment(payment);
+              if (!verified.success || verified.verified !== true) {
+                showToast("Payment verification failed. Please contact support if money was deducted.", "error");
+                return;
+              }
+              closeDonationModal();
+              showReceiptModal(nameVal, emailVal, `₹${amountVal.toLocaleString("en-IN")}`, order.requestId, "SUCCEEDED");
+              showToast("Thank you! Your donation was successful.", "success");
+            } catch (_) {
+              showToast("Payment verification failed. Please contact support if money was deducted.", "error");
+            } finally {
+              proceedPayBtn.disabled = false;
+              proceedPayBtn.textContent = "Donate Securely";
+            }
+          },
+          modal: { ondismiss: () => {
+            if (checkoutOpened && !paymentFinished) {
+              showToast("Payment cancelled or checkout closed. No successful payment was recorded.", "error");
+            }
+            proceedPayBtn.disabled = false;
+            proceedPayBtn.textContent = "Donate Securely";
+          } }
+        });
+        checkout.on("payment.failed", () => {
+          paymentFinished = true;
+          showToast("Payment failed. Please contact support if money was deducted.", "error");
+        });
+        checkout.open();
+        checkoutOpened = true;
+      } catch (_) {
+        showToast("Could not start payment. Check your connection and try again.", "error");
+      } finally {
+        if (!checkoutOpened) {
+          proceedPayBtn.disabled = false;
+          proceedPayBtn.textContent = "Donate Securely";
+        }
       }
-
-      closeDonationModal();
-      const sym = AyushState.currency === "INR" ? String.fromCharCode(8377) : "$";
-      showReceiptModal(nameVal, emailVal, `${sym}${amountVal}`, result.requestId);
     });
   }
 }
 
+function loadRazorpayCheckout() {
+  if (window.Razorpay) return Promise.resolve(true);
+  return new Promise(resolve => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve(Boolean(window.Razorpay));
+    script.onerror = () => resolve(false);
+    document.head.appendChild(script);
+  });
+}
+
 function updateImpactExplainer() {
   const badge = document.getElementById("impactExplainerBadge");
-  if (badge) badge.textContent = "This creates a pending request only. No payment or recurring charge is made.";
+  if (badge) badge.textContent = "Choose a one-time INR donation. Monthly donations are coming soon.";
 }
 
 /* --------------------------------------------------------------------------
    6. Donation Request Confirmation Modal
    -------------------------------------------------------------------------- */
-function showReceiptModal(name, email, amountStr, requestId) {
+function showReceiptModal(name, email, amountStr, requestId, status = "PENDING_PAYMENT") {
   let modal = document.getElementById("receiptModal");
   if (!modal) {
     modal = document.createElement("div");
@@ -361,8 +415,8 @@ function showReceiptModal(name, email, amountStr, requestId) {
       <button class="modal-close-btn" id="closeReceiptBtn" aria-label="Close">X</button>
       <div class="modal-header">
         <div class="modal-heart-icon" style="background:#dcfce7; color:#16a34a;">OK</div>
-        <h3 class="modal-title">Donation Request Received</h3>
-        <p class="modal-subtitle">This confirms your request only. No payment has been collected.</p>
+        <h3 class="modal-title">${status === "SUCCEEDED" ? "Donation Payment Successful" : "Donation Request Received"}</h3>
+        <p class="modal-subtitle">${status === "SUCCEEDED" ? "Your payment has been verified by the payment provider." : "Payment remains pending. No successful payment has been confirmed."}</p>
       </div>
       <div class="receipt-certificate">
         <div class="receipt-header"><strong>Ayush NGO</strong></div>
@@ -372,7 +426,7 @@ function showReceiptModal(name, email, amountStr, requestId) {
         <div class="receipt-row"><span>Requested amount:</span> <strong>${escapeHtml(amountStr)}</strong></div>
         <div class="receipt-row"><span>Cause:</span> <span>${escapeHtml(AyushState.activeCause)}</span></div>
         <div class="receipt-row"><span>Frequency:</span> <span>${escapeHtml(AyushState.frequency)}</span></div>
-        <div class="receipt-row"><span>Status:</span> <span>Pending payment</span></div>
+        <div class="receipt-row"><span>Status:</span> <span>${status === "SUCCEEDED" ? "Payment verified" : "Pending payment"}</span></div>
         <div class="receipt-row"><span>Date:</span> <span>${new Date().toLocaleDateString()}</span></div>
       </div>
       <div style="margin-top:20px; display:flex; gap:10px;">

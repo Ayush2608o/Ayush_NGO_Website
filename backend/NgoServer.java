@@ -24,6 +24,14 @@ import java.util.List;
 import java.util.HexFormat;
 import java.util.Locale;
 import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.math.BigDecimal;
+import java.nio.file.StandardCopyOption;
+import java.security.MessageDigest;
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * =========================================================================
@@ -73,6 +81,9 @@ public class NgoServer {
         server.createContext("/api/donations/recent", new RecentDonationsHandler());
         server.createContext("/api/contact", new ContactHandler());
         server.createContext("/api/donate", new DonateHandler());
+        server.createContext("/api/payment/config", new PaymentConfigHandler());
+        server.createContext("/api/payment/order", new PaymentOrderHandler());
+        server.createContext("/api/payment/verify", new PaymentVerifyHandler());
         server.createContext("/api/volunteer", new VolunteerHandler());
         server.createContext("/api/newsletter", new NewsletterHandler());
         server.createContext("/api/auth", new AuthHandler());
@@ -419,6 +430,130 @@ public class NgoServer {
 
             sendJsonResponse(exchange, 200, json);
         }
+    }
+
+    private static String razorpayKeyId() { return System.getenv().getOrDefault("RAZORPAY_KEY_ID", "").trim(); }
+    private static String razorpayKeySecret() { return System.getenv().getOrDefault("RAZORPAY_KEY_SECRET", "").trim(); }
+    private static boolean razorpayConfigured() { return !razorpayKeyId().isEmpty() && !razorpayKeySecret().isEmpty(); }
+    private static final HttpClient PAYMENT_HTTP = HttpClient.newBuilder().connectTimeout(java.time.Duration.ofSeconds(10)).build();
+
+    static class PaymentConfigHandler implements HttpHandler {
+        @Override public void handle(HttpExchange ex) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(ex.getRequestMethod())) { setCorsHeaders(ex); ex.sendResponseHeaders(204, -1); return; }
+            if (!"GET".equalsIgnoreCase(ex.getRequestMethod())) { sendJsonResponse(ex, 405, "{\"success\":false}"); return; }
+            sendJsonResponse(ex, 200, "{\"success\":true,\"enabled\":" + razorpayConfigured() + ",\"keyId\":" + AuthHandler.quote(razorpayKeyId()) + "}");
+        }
+    }
+
+    static class PaymentOrderHandler implements HttpHandler {
+        @Override public void handle(HttpExchange ex) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(ex.getRequestMethod())) { setCorsHeaders(ex); ex.sendResponseHeaders(204, -1); return; }
+            if (!"POST".equalsIgnoreCase(ex.getRequestMethod())) { sendJsonResponse(ex, 405, "{\"success\":false,\"message\":\"Method not allowed.\"}"); return; }
+            if (!razorpayConfigured()) { sendJsonResponse(ex, 503, "{\"success\":false,\"message\":\"Online payments are not configured yet.\"}"); return; }
+            String body;
+            try { body = readRequestBody(ex); } catch (IOException e) { sendJsonResponse(ex, 413, "{\"success\":false,\"message\":\"Request too large.\"}"); return; }
+            BigDecimal amount;
+            try { amount = new BigDecimal(jsonNumber(body, "amount")); } catch (Exception e) { sendJsonResponse(ex, 400, "{\"success\":false,\"message\":\"Enter a valid amount.\"}"); return; }
+            String currency = jsonString(body, "currency"), frequency = jsonString(body, "frequency");
+            String name = jsonString(body, "donorName"), email = jsonString(body, "donorEmail"), phone = jsonString(body, "donorPhone"), cause = jsonString(body, "cause");
+            if (!isJsonRequest(ex) || !validJsonObject(body) || amount.scale() > 0 || amount.compareTo(BigDecimal.ONE) < 0 || amount.compareTo(new BigDecimal("1000000")) > 0
+                    || !"INR".equals(currency) || !"one-time".equals(frequency)
+                    || !validField(body, "donorName", 1, 120) || !validEmail(email) || !validDonationPhone(phone) || cause == null || cause.length() > 120) {
+                sendJsonResponse(ex, 400, "{\"success\":false,\"message\":\"Enter valid details for a one-time INR donation. Monthly donations are coming soon.\"}"); return;
+            }
+            long minor;
+            try { minor = amount.movePointRight(2).longValueExact(); } catch (ArithmeticException e) { sendJsonResponse(ex, 400, "{\"success\":false,\"message\":\"Amount is invalid.\"}"); return; }
+            String requestId = "AYUSH-" + UUID.randomUUID();
+            String payload = "{\"amount\":" + minor + ",\"currency\":\"INR\",\"receipt\":" + AuthHandler.quote(requestId.substring(0, Math.min(40, requestId.length()))) + ",\"notes\":{\"donor_name\":" + AuthHandler.quote(name) + ",\"donor_email\":" + AuthHandler.quote(email) + ",\"donor_phone\":" + AuthHandler.quote(phone) + ",\"cause\":" + AuthHandler.quote(cause) + "}}";
+            try {
+                HttpRequest request = HttpRequest.newBuilder(URI.create("https://api.razorpay.com/v1/orders"))
+                        .timeout(java.time.Duration.ofSeconds(20)).header("Content-Type", "application/json")
+                        .header("Authorization", "Basic " + Base64.getEncoder().encodeToString((razorpayKeyId() + ":" + razorpayKeySecret()).getBytes(StandardCharsets.UTF_8)))
+                        .POST(HttpRequest.BodyPublishers.ofString(payload)).build();
+                HttpResponse<String> response = PAYMENT_HTTP.send(request, HttpResponse.BodyHandlers.ofString());
+                String orderId = jsonString(response.body(), "id");
+                if (response.statusCode() < 200 || response.statusCode() >= 300 || orderId == null || !orderId.startsWith("order_")) {
+                    System.err.println("Razorpay order creation failed with HTTP " + response.statusCode());
+                    sendJsonResponse(ex, 502, "{\"success\":false,\"message\":\"The payment provider could not create an order. Please try again.\"}"); return;
+                }
+                String record = "{\"requestId\":" + AuthHandler.quote(requestId) + ",\"donorName\":" + AuthHandler.quote(name) + ",\"donorEmail\":" + AuthHandler.quote(email) + ",\"donorPhone\":" + AuthHandler.quote(phone)
+                        + ",\"cause\":" + AuthHandler.quote(cause) + ",\"amount\":" + amount.toPlainString() + ",\"currency\":" + AuthHandler.quote(currency)
+                        + ",\"frequency\":\"one-time\",\"status\":\"PENDING_PAYMENT\",\"razorpayOrderId\":" + AuthHandler.quote(orderId) + ",\"timestamp\":" + AuthHandler.quote(Instant.now().toString()) + "}";
+                if (!appendToFile("donations.jsonl", record)) { sendJsonResponse(ex, 500, "{\"success\":false,\"message\":\"Could not save donation request.\"}"); return; }
+                sendJsonResponse(ex, 200, "{\"success\":true,\"requestId\":" + AuthHandler.quote(requestId) + ",\"orderId\":" + AuthHandler.quote(orderId) + ",\"amount\":" + minor + ",\"currency\":" + AuthHandler.quote(currency) + ",\"keyId\":" + AuthHandler.quote(razorpayKeyId()) + "}");
+            } catch (InterruptedException e) { Thread.currentThread().interrupt(); sendJsonResponse(ex, 503, "{\"success\":false,\"message\":\"Payment provider request was interrupted.\"}"); }
+            catch (Exception e) { System.err.println("Razorpay order request could not be completed."); sendJsonResponse(ex, 502, "{\"success\":false,\"message\":\"Could not reach the payment provider. Please try again.\"}"); }
+        }
+    }
+
+    private static boolean validDonationPhone(String phone) {
+        return phone != null && phone.length() >= 7 && phone.length() <= 20 && phone.matches("[+0-9(). -]+")
+                && phone.replaceAll("\\D", "").length() >= 7;
+    }
+
+    static class PaymentVerifyHandler implements HttpHandler {
+        @Override public void handle(HttpExchange ex) throws IOException {
+            if ("OPTIONS".equalsIgnoreCase(ex.getRequestMethod())) { setCorsHeaders(ex); ex.sendResponseHeaders(204, -1); return; }
+            if (!"POST".equalsIgnoreCase(ex.getRequestMethod())) { sendJsonResponse(ex, 405, "{\"success\":false}"); return; }
+            if (!razorpayConfigured()) { sendJsonResponse(ex, 503, "{\"success\":false,\"message\":\"Payments are not configured.\"}"); return; }
+            String body;
+            try { body = readRequestBody(ex); } catch (IOException e) { sendJsonResponse(ex, 413, "{\"success\":false}"); return; }
+            String orderId = jsonString(body, "razorpay_order_id"), paymentId = jsonString(body, "razorpay_payment_id"), signature = jsonString(body, "razorpay_signature");
+            if (!isJsonRequest(ex) || !validJsonObject(body) || orderId == null || paymentId == null || signature == null || !paymentExists(orderId)) {
+                sendJsonResponse(ex, 400, "{\"success\":false,\"message\":\"Payment details could not be verified.\"}"); return;
+            }
+            try {
+                Mac mac = Mac.getInstance("HmacSHA256");
+                mac.init(new SecretKeySpec(razorpayKeySecret().getBytes(StandardCharsets.UTF_8), "HmacSHA256"));
+                String expected = HexFormat.of().formatHex(mac.doFinal((orderId + "|" + paymentId).getBytes(StandardCharsets.UTF_8)));
+                if (!MessageDigest.isEqual(expected.getBytes(StandardCharsets.US_ASCII), signature.getBytes(StandardCharsets.US_ASCII))) {
+                    sendJsonResponse(ex, 400, "{\"success\":false,\"message\":\"Payment signature is invalid.\"}"); return;
+                }
+                String auth = "Basic " + Base64.getEncoder().encodeToString((razorpayKeyId() + ":" + razorpayKeySecret()).getBytes(StandardCharsets.UTF_8));
+                HttpRequest req = HttpRequest.newBuilder(URI.create("https://api.razorpay.com/v1/payments/" + paymentId)).timeout(java.time.Duration.ofSeconds(20)).header("Authorization", auth).GET().build();
+                HttpResponse<String> payment = PAYMENT_HTTP.send(req, HttpResponse.BodyHandlers.ofString());
+                if (payment.statusCode() < 200 || payment.statusCode() >= 300 || !orderId.equals(jsonString(payment.body(), "order_id")) || !"captured".equals(jsonString(payment.body(), "status"))) {
+                    sendJsonResponse(ex, 409, "{\"success\":false,\"message\":\"Payment is not captured yet. Please check again shortly.\"}"); return;
+                }
+                String paid = jsonNumber(payment.body(), "amount"), expectedAmount = findOrderAmount(orderId);
+                if (paid == null || expectedAmount == null || !paid.equals(expectedAmount) || !markDonationPaid(orderId, paymentId)) {
+                    sendJsonResponse(ex, 409, "{\"success\":false,\"message\":\"Payment amount could not be matched to the donation. Contact support before retrying.\"}"); return;
+                }
+                sendJsonResponse(ex, 200, "{\"success\":true,\"verified\":true,\"status\":\"SUCCEEDED\",\"paymentId\":" + AuthHandler.quote(paymentId) + ",\"message\":\"Payment verified successfully.\"}");
+            } catch (InterruptedException e) { Thread.currentThread().interrupt(); sendJsonResponse(ex, 503, "{\"success\":false,\"message\":\"Could not verify payment right now.\"}"); }
+            catch (Exception e) { sendJsonResponse(ex, 500, "{\"success\":false,\"message\":\"Could not verify payment right now.\"}"); }
+        }
+    }
+
+    private static synchronized boolean paymentExists(String orderId) { return findDonationRecord(orderId) != null; }
+    private static synchronized String findOrderAmount(String orderId) {
+        String row = findDonationRecord(orderId); if (row == null) return null;
+        try { return new BigDecimal(jsonNumber(row, "amount")).movePointRight(2).longValueExact() + ""; } catch (Exception e) { return null; }
+    }
+    private static String findDonationRecord(String orderId) {
+        Path file = DATA_DIR.resolve("donations.jsonl");
+        try { if (!Files.exists(file)) return null; for (String row : Files.readAllLines(file, StandardCharsets.UTF_8)) if (orderId.equals(jsonString(row, "razorpayOrderId"))) return row; }
+        catch (IOException ignored) { }
+        return null;
+    }
+    private static synchronized boolean markDonationPaid(String orderId, String paymentId) {
+        Path file = DATA_DIR.resolve("donations.jsonl"), temp = DATA_DIR.resolve("donations.jsonl.tmp");
+        try {
+            List<String> rows = Files.exists(file) ? Files.readAllLines(file, StandardCharsets.UTF_8) : new java.util.ArrayList<>();
+            boolean found = false;
+            for (int i = 0; i < rows.size(); i++) {
+                String row = rows.get(i);
+                if (!orderId.equals(jsonString(row, "razorpayOrderId"))) continue;
+                if ("SUCCEEDED".equals(jsonString(row, "status"))) return true;
+                row = row.substring(0, row.length() - 1) + ",\"status\":\"SUCCEEDED\",\"paymentId\":" + AuthHandler.quote(paymentId) + ",\"paidAt\":" + AuthHandler.quote(Instant.now().toString()) + "}";
+                rows.set(i, row); found = true; break;
+            }
+            if (!found) return false;
+            Files.write(temp, rows, StandardCharsets.UTF_8, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            try { Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE); }
+            catch (java.nio.file.AtomicMoveNotSupportedException e) { Files.move(temp, file, StandardCopyOption.REPLACE_EXISTING); }
+            return true;
+        } catch (IOException e) { return false; }
     }
 
     // 8. Volunteer Handler (POST /api/volunteer)

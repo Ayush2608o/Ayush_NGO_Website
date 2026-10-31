@@ -6,6 +6,13 @@ services:
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
     healthCheckPath: /api/health
+    envVars:
+      - key: FRONTEND_ORIGIN
+        value: https://ayushngo.netlify.app
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
     disk:
       name: ngo-data
       mountPath: /var/data
