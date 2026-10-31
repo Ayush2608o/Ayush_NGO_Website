@@ -27,19 +27,23 @@ New accounts are stored in `%USERPROFILE%\.ayush-ngo-data\accounts.tsv`. Passwor
 
 - Signup creates a local account; sign in uses that account's email and password.
 - Profile details are scoped to the signed-in account.
+- Signed-in users can change their password by confirming the current password in `profile.html`.
+- If email recovery is not configured, run `scripts/reset-account-password.ps1` locally to choose a new account password without displaying it in the terminal.
 - Donation history matches donation requests by the signed-in account's email address.
 - Donation requests remain `PENDING_PAYMENT`. The site does not collect money or claim that a payment succeeded.
 - Successful totals only include records explicitly marked `SUCCEEDED`; no payment provider or verified payment webhook is configured.
-- Password reset, email verification, Google sign in, and administrator access are not configured in the Java SE server.
+- Contact, volunteer, and newsletter forms are saved in private JSON Lines files; the Java server does not send email.
+- Email-based password recovery, email verification, Google sign in, and administrator access are not configured in the Java SE server.
 
 ## API routes
 
 - `GET /api/health`
 - `GET /api/auth/csrf`, `GET /api/auth/me`, `GET /api/auth/options`
-- `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`
+- `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`, `POST /api/auth/change-password`
 - `GET /api/profile/me`, `PUT /api/profile/me`
 - `GET /api/donations/me`, `GET /api/donations/me/summary`
 - `POST /api/contact`, `POST /api/newsletter`, `POST /api/volunteer`, `POST /api/donate`
+- `GET /api/stats`, `GET /api/projects`, `GET /api/news`, `GET /api/donations/recent`
 
 ## Hosting notes
 

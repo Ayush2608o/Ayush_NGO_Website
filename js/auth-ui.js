@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
   initLoginForm();
   initSignupForm();
   initProfilePage();
+  initPasswordChange();
   initDonationDashboard();
   initVerificationPage();
   initPasswordResetPage();
@@ -155,7 +156,7 @@ function initProfilePage() {
     document.getElementById("memberSince").textContent = user.memberSince ? `Member since ${new Date(user.memberSince).toLocaleDateString()}` : "Your account profile";
     document.getElementById("profileName").value = user.fullName || "";
     document.getElementById("profileEmail").value = user.email || "";
-    document.getElementById("emailVerificationState").textContent = user.emailVerified ? "Email verified" : "Email verification required";
+    document.getElementById("emailVerificationState").textContent = user.emailVerified ? "Email verified" : "Email verification is not configured.";
     document.getElementById("profilePhone").value = user.phone || "";
     document.getElementById("profileAddress").value = user.address || "";
   };
@@ -175,6 +176,31 @@ function initProfilePage() {
     setBusy(button, false, "", "Save changes");
     accountStatus(status, result.message || (result.success ? "Profile saved." : "Profile could not be saved."), result.success ? "success" : "error");
     if (result.success) load();
+  });
+}
+
+function initPasswordChange() {
+  const form = document.getElementById("changePasswordForm");
+  if (!form) return;
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    const status = document.getElementById("passwordChangeStatus");
+    const currentPassword = document.getElementById("currentPassword").value;
+    const newPassword = document.getElementById("newPassword").value;
+    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).{12,72}$/.test(newPassword)) {
+      accountStatus(status, "Use 12+ characters with uppercase, lowercase, a number, and a symbol.", "error");
+      return;
+    }
+    if (newPassword !== document.getElementById("confirmNewPassword").value) {
+      accountStatus(status, "The new passwords do not match.", "error");
+      return;
+    }
+    const button = form.querySelector('[type="submit"]');
+    setBusy(button, true, "Updating…", "Update password");
+    const result = await window.AyushAPI.post("/auth/change-password", { currentPassword, newPassword });
+    setBusy(button, false, "", "Update password");
+    accountStatus(status, result.message || (result.success ? "Password updated." : "Password could not be updated."), result.success ? "success" : "error");
+    if (result.success) form.reset();
   });
 }
 

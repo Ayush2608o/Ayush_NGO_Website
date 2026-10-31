@@ -515,6 +515,7 @@ public class NgoServer {
             if (!isJsonRequest(exchange) || !validJsonObject(body)) { sendJsonResponse(exchange, 400, "{\"success\":false,\"message\":\"Invalid request.\"}"); return; }
             if (path.equals("/api/auth/register") && "POST".equalsIgnoreCase(method)) { register(exchange, body); return; }
             if (path.equals("/api/auth/login") && "POST".equalsIgnoreCase(method)) { login(exchange, body, session); return; }
+            if (path.equals("/api/auth/change-password") && "POST".equalsIgnoreCase(method)) { changePassword(exchange, body, session); return; }
             if (path.equals("/api/auth/logout") && "POST".equalsIgnoreCase(method)) { logout(exchange); return; }
             if (path.equals("/api/profile/me") && "PUT".equalsIgnoreCase(method)) { updateProfile(exchange, body, session); return; }
             sendJsonResponse(exchange, 404, "{\"success\":false,\"message\":\"Account endpoint not found.\"}");
@@ -638,6 +639,38 @@ public class NgoServer {
             sendJsonResponse(ex, 200, "{\"success\":true,\"message\":\"Signed out.\"}");
         }
 
+        private void changePassword(HttpExchange ex, String body, AuthSession session) throws IOException {
+            if (session.email() == null) { sendJsonResponse(ex, 401, "{\"success\":false,\"message\":\"Sign in to change your password.\"}"); return; }
+            Account old = find(session.email());
+            String currentPassword = jsonString(body, "currentPassword");
+            String nextPassword = jsonString(body, "newPassword");
+            if (old == null || currentPassword == null || nextPassword == null
+                    || !java.security.MessageDigest.isEqual(old.passwordHash(), derive(currentPassword.toCharArray(), old.salt()))) {
+                sendJsonResponse(ex, 400, "{\"success\":false,\"message\":\"Current password is incorrect.\"}"); return;
+            }
+            if (!nextPassword.matches("(?s)(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z\\d]).{12,72}")) {
+                sendJsonResponse(ex, 400, "{\"success\":false,\"message\":\"Use 12+ characters with uppercase, lowercase, a number, and a symbol.\"}"); return;
+            }
+            byte[] salt = new byte[16]; AUTH_RANDOM.nextBytes(salt);
+            Account updated = new Account(old.email(), old.fullName(), old.phone(), old.address(), salt, derive(nextPassword.toCharArray(), salt));
+            if (!replaceAccount(updated)) { sendJsonResponse(ex, 500, "{\"success\":false,\"message\":\"Could not save the new password.\"}"); return; }
+            sendJsonResponse(ex, 200, "{\"success\":true,\"message\":\"Password updated successfully.\"}");
+        }
+
+        private static synchronized boolean replaceAccount(Account account) {
+            try {
+                List<String> lines = Files.exists(ACCOUNT_FILE) ? Files.readAllLines(ACCOUNT_FILE, StandardCharsets.UTF_8) : new java.util.ArrayList<>();
+                boolean replaced = false;
+                for (int i = 0; i < lines.size(); i++) {
+                    try { if (decode(lines.get(i)).email().equals(account.email())) { lines.set(i, encode(account)); replaced = true; break; } }
+                    catch (RuntimeException ignored) { /* Preserve malformed legacy rows. */ }
+                }
+                if (!replaced) return false;
+                Files.write(ACCOUNT_FILE, lines, StandardCharsets.UTF_8);
+                return true;
+            } catch (IOException e) { return false; }
+        }
+
         private void updateProfile(HttpExchange ex, String body, AuthSession s) throws IOException {
             Account old = find(s.email());
             String name = jsonString(body, "fullName");
@@ -681,7 +714,7 @@ public class NgoServer {
         private static String unb64(String v) { return new String(Base64.getUrlDecoder().decode(v), StandardCharsets.UTF_8); }
         private static String safe(String s) { return s == null ? "" : s.trim(); }
         private static String norm(String s) { return s == null ? null : s.trim().toLowerCase(Locale.ROOT); }
-        private static String userJson(Account a) { return "{\"email\":" + quote(a.email()) + ",\"fullName\":" + quote(a.fullName()) + ",\"phone\":" + quote(a.phone()) + ",\"address\":" + quote(a.address()) + ",\"emailVerified\":true}"; }
+        private static String userJson(Account a) { return "{\"email\":" + quote(a.email()) + ",\"fullName\":" + quote(a.fullName()) + ",\"phone\":" + quote(a.phone()) + ",\"address\":" + quote(a.address()) + ",\"emailVerified\":false}"; }
         private static String quote(String s) { return "\"" + safe(s).replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r") + "\""; }
 
     }

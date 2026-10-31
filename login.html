@@ -15,12 +15,10 @@
       <form id="loginForm" class="account-form" novalidate>
         <label for="loginEmail">Email address</label><input id="loginEmail" name="email" type="email" autocomplete="email" maxlength="254" required>
         <label for="loginPassword">Password</label><div class="password-field"><input id="loginPassword" name="password" type="password" autocomplete="current-password" required><button type="button" class="password-toggle" data-password-toggle="loginPassword" aria-label="Show password">Show</button></div>
-        <div class="account-form-row"><label class="account-checkbox"><input type="checkbox" name="remember"> Keep me signed in</label><a href="reset-password.html">Forgot password?</a></div>
+        <p class="account-hint">Forgot your password? <a href="reset-password.html">Reset it on this computer.</a></p>
         <button class="btn btn-primary account-submit" type="submit">Sign in</button>
         <p class="account-status" id="loginStatus" role="status" aria-live="polite"></p>
       </form>
-      <div class="account-divider"><span>or</span></div>
-      <a id="googleLogin" class="btn btn-google" href="#" hidden>Continue with Google</a>
       <p class="account-switch">New to Ayush NGO? <a href="signup.html">Create an account</a></p>
       <p class="account-demo-note">Use the email address and password you chose when creating your account.</p>
     </section>

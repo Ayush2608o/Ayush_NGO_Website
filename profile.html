@@ -13,11 +13,23 @@
       <div id="profileAlert" class="account-status" role="status" aria-live="polite"></div>
       <form id="profileForm" class="account-form account-profile-form" novalidate>
         <label for="profileName">Full name</label><input id="profileName" type="text" maxlength="120" autocomplete="name" required>
-        <label for="profileEmail">Verified email</label><input id="profileEmail" type="email" readonly aria-describedby="emailVerificationState">
+        <label for="profileEmail">Email address</label><input id="profileEmail" type="email" readonly aria-describedby="emailVerificationState">
         <p id="emailVerificationState" class="account-hint"></p>
         <label for="profilePhone">Phone number</label><input id="profilePhone" type="tel" maxlength="40" autocomplete="tel">
         <label for="profileAddress">Address <span class="account-optional">Optional</span></label><textarea id="profileAddress" rows="3" maxlength="500" autocomplete="street-address"></textarea>
         <div class="account-actions"><button class="btn btn-primary" type="submit">Save changes</button><a class="btn btn-secondary" href="dashboard.html">View donation history</a></div>
+      </form>
+    </section>
+    <section class="account-card account-card-wide account-password-card">
+      <p class="account-eyebrow">ACCOUNT SECURITY</p><h2>Change password</h2>
+      <p class="account-hint">Use your current password to choose a new one. Email password recovery is not configured.</p>
+      <form id="changePasswordForm" class="account-form" novalidate>
+        <label for="currentPassword">Current password</label><div class="password-field"><input id="currentPassword" type="password" autocomplete="current-password" required><button type="button" class="password-toggle" data-password-toggle="currentPassword">Show</button></div>
+        <label for="newPassword">New password</label><div class="password-field"><input id="newPassword" type="password" minlength="12" maxlength="72" autocomplete="new-password" required><button type="button" class="password-toggle" data-password-toggle="newPassword">Show</button></div>
+        <p class="account-hint">Use at least 12 characters with upper and lower case letters, a number, and a symbol.</p>
+        <label for="confirmNewPassword">Confirm new password</label><div class="password-field"><input id="confirmNewPassword" type="password" minlength="12" maxlength="72" autocomplete="new-password" required><button type="button" class="password-toggle" data-password-toggle="confirmNewPassword">Show</button></div>
+        <button class="btn btn-primary account-submit" type="submit">Update password</button>
+        <p id="passwordChangeStatus" class="account-status" role="status" aria-live="polite"></p>
       </form>
     </section>
   </main>
