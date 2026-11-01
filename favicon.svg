@@ -1,5 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
-  <rect width="64" height="64" rx="16" fill="#030407"/>
-  <path d="M32 48V30m0 7c-11 0-18-7-18-18 11 0 18 7 18 18Zm0-5c0-11 7-18 18-18 0 11-7 18-18 18Z" fill="none" stroke="#d4ff24" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
-  <circle cx="32" cy="49" r="3" fill="#1558c9"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <defs>
+    <linearGradient id="tile" x1="8" y1="5" x2="57" y2="61" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#123b78"/>
+      <stop offset="1" stop-color="#071a35"/>
+    </linearGradient>
+    <linearGradient id="leaf" x1="18" y1="15" x2="47" y2="49" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#e5ff8a"/>
+      <stop offset="1" stop-color="#83db72"/>
+    </linearGradient>
+  </defs>
+  <rect x="2" y="2" width="60" height="60" rx="19" fill="url(#tile)"/>
+  <circle cx="46" cy="17" r="5" fill="#ffd66b"/>
+  <path d="M31.8 43.5V29.1" stroke="#f4f8ff" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M31.8 31.2c-8.1 0-13.2-5.1-13.2-13.2 8.1 0 13.2 5.1 13.2 13.2Z" fill="url(#leaf)"/>
+  <path d="M32 26.8c0-8.1 5.1-13.2 13.2-13.2 0 8.1-5.1 13.2-13.2 13.2Z" fill="url(#leaf)"/>
+  <path d="M17.5 42.2c3.8 6.2 9.1 9.3 14.5 9.3s10.7-3.1 14.5-9.3" stroke="#f4f8ff" stroke-width="3.2" stroke-linecap="round"/>
+  <path d="M22.7 41.4c2.7 2.7 5.8 4.1 9.3 4.1s6.6-1.4 9.3-4.1" stroke="#7ec8ff" stroke-width="2.6" stroke-linecap="round"/>
 </svg>

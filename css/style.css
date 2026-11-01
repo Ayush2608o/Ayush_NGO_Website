@@ -3407,3 +3407,28 @@ html[data-theme="dark"] body.gallery-page .theme-toggle-btn { border-color:#2732
 .volunteer-interest-options input { accent-color:#1558C9; }
 .volunteer-submit { margin-top:8px; }
 @media(max-width:640px) { .form-grid-two { grid-template-columns:1fr; } }
+
+/* Use the shipped SVG mark so the site logo does not depend on emoji fonts. */
+.brand-logo .brand-icon-wrapper {
+  background: transparent !important;
+  color: transparent !important;
+  font-size: 0 !important;
+}
+.brand-logo .brand-icon-wrapper::before { content: none !important; }
+.brand-mark {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.pillar-icon-box svg,
+.mv-icon-circle svg {
+  display: block;
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
