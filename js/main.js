@@ -1,38 +1,20 @@
 /**
  * Ayush NGO - Advanced Interactive Client Engine (Agency Grade)
- * Shared navigation, theme and currency controls, forms, donation requests,
+ * Shared navigation, theme controls, forms, donation requests,
  * gallery filtering and lightbox, FAQ accordion, and page status.
  */
 
-// Global State
-function readPreference(key, fallback) {
-  try { return localStorage.getItem(key) || fallback; }
-  catch (_) { return fallback; }
-}
-
-function savePreference(key, value) {
-  try { localStorage.setItem(key, value); } catch (_) { /* Storage may be disabled. */ }
-}
-
-const AyushState = {
-  theme: readPreference("asha_theme", "light"),
-  currency: readPreference("asha_currency", "USD"),
-  frequency: "one-time",
-  activeCause: "General Fund"
-};
-
 document.addEventListener("DOMContentLoaded", () => {
   initMobileNavigation();
-  initThemeSystem();
-  initCurrencySystem();
   initScrollProgress();
   initBackToTop();
   initWhatsAppFloat();
   initDonationModal();
-  initVolunteerModal();
   initNewsletterForm();
   initContactForm();
+  initVolunteerPageForm();
   initFaqAccordion();
+  initGalleryContent();
   initGalleryFilters();
   initGalleryLightbox();
   initYearAndBackendStatus();
@@ -70,91 +52,6 @@ function initMobileNavigation() {
   document.addEventListener("keydown", event => {
     if (event.key === "Escape") setMenuOpen(false);
   });
-}
-
-/* --------------------------------------------------------------------------
-   1. Dark / Light Theme System
-   -------------------------------------------------------------------------- */
-function initThemeSystem() {
-  document.documentElement.setAttribute("data-theme", AyushState.theme);
-  updateThemeButtonUI();
-
-  document.querySelectorAll(".theme-toggle-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      AyushState.theme = AyushState.theme === "dark" ? "light" : "dark";
-      savePreference("asha_theme", AyushState.theme);
-      document.documentElement.setAttribute("data-theme", AyushState.theme);
-      updateThemeButtonUI();
-    });
-  });
-}
-
-function updateThemeButtonUI() {
-  document.querySelectorAll(".theme-toggle-btn").forEach(btn => {
-    btn.innerHTML = AyushState.theme === "dark" ? "☀️ Light" : "🌙 Dark";
-    btn.setAttribute("title", `Switch to ${AyushState.theme === "dark" ? "Light" : "Dark"} mode`);
-  });
-}
-
-/* --------------------------------------------------------------------------
-   2. Currency Switcher ($ USD / ₹ INR)
-   -------------------------------------------------------------------------- */
-function initCurrencySystem() {
-  updateCurrencyButtonUI();
-
-  document.querySelectorAll(".currency-toggle-btn").forEach(btn => {
-    btn.addEventListener("click", () => {
-      AyushState.currency = AyushState.currency === "USD" ? "INR" : "USD";
-      savePreference("asha_currency", AyushState.currency);
-      updateCurrencyButtonUI();
-      updateDOMCurrencyValues();
-    });
-  });
-
-  updateDOMCurrencyValues();
-}
-
-function updateCurrencyButtonUI() {
-  document.querySelectorAll(".currency-toggle-btn").forEach(btn => {
-    btn.innerHTML = AyushState.currency === "USD" ? "💵 USD ($)" : "₹ INR (₹)";
-    btn.setAttribute("title", `Currency: ${AyushState.currency}. Click to switch.`);
-  });
-}
-
-function updateDOMCurrencyValues() {
-  const isINR = AyushState.currency === "INR";
-  const sym = isINR ? "₹" : "$";
-
-  const presets = document.querySelectorAll(".preset-btn");
-  if (presets.length >= 3) {
-    if (isINR) {
-      presets[0].textContent = "₹2,000";
-      presets[0].setAttribute("data-amount", "2000");
-      presets[1].textContent = "₹4,000";
-      presets[1].setAttribute("data-amount", "4000");
-      presets[2].textContent = "₹8,000";
-      presets[2].setAttribute("data-amount", "8000");
-    } else {
-      presets[0].textContent = "$25";
-      presets[0].setAttribute("data-amount", "25");
-      presets[1].textContent = "$50";
-      presets[1].setAttribute("data-amount", "50");
-      presets[2].textContent = "$100";
-      presets[2].setAttribute("data-amount", "100");
-    }
-  }
-
-  const customInput = document.getElementById("customAmountInput");
-  if (customInput) {
-    customInput.value = isINR ? "4000" : "50";
-  }
-
-  const amountLabel = document.querySelector(".amount-label");
-  if (amountLabel) {
-    amountLabel.textContent = `SELECT AMOUNT (${sym})`;
-  }
-
-  updateImpactExplainer();
 }
 
 /* --------------------------------------------------------------------------
@@ -217,33 +114,130 @@ function initDonationModal() {
   const modal = document.getElementById("donationModal");
   if (!modal) return;
 
+  const title = document.getElementById("donationModalTitle");
+  const body = modal.querySelector(".modal-body");
+  if (title) title.textContent = "Support our work";
+  if (body) {
+    body.replaceChildren();
+    body.innerHTML = `
+      <p class="form-help" id="donationAvailability">Online payment is currently unavailable. Please try again later.</p>
+      <form id="donationForm" novalidate>
+        <div class="donation-freq-toggle" role="group" aria-label="Donation frequency">
+          <button class="freq-btn active" type="button" data-frequency="ONE_TIME" aria-pressed="true">One-time</button>
+          <button class="freq-btn" type="button" data-frequency="MONTHLY" aria-pressed="false">Monthly</button>
+        </div>
+        <label class="amount-label" for="customAmountInput">Choose an amount (INR ₹)</label>
+        <div class="preset-amounts-row" role="group" aria-label="Donation amount">
+          <button class="preset-btn selected" type="button" data-amount="500" aria-pressed="true">₹500</button>
+          <button class="preset-btn" type="button" data-amount="1000" aria-pressed="false">₹1,000</button>
+          <button class="preset-btn" type="button" data-amount="2500" aria-pressed="false">₹2,500</button>
+          <button class="preset-btn" type="button" data-amount="5000" aria-pressed="false">₹5,000</button>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="customAmountInput">Custom amount (₹)</label>
+          <input class="form-control" id="customAmountInput" name="amount" type="number" min="5" max="1000000" step="1" value="500" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="donorName">Full name</label>
+          <input class="form-control" id="donorName" name="name" type="text" autocomplete="name" maxlength="120" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="donorEmail">Email address</label>
+          <input class="form-control" id="donorEmail" name="email" type="email" autocomplete="email" maxlength="254" required>
+        </div>
+        <p id="donationStatus" class="form-status" role="status" aria-live="polite"></p>
+        <button class="btn btn-primary" type="submit">Continue to payment</button>
+      </form>`;
+
+    const form = body.querySelector("#donationForm");
+    const amountInput = body.querySelector("#customAmountInput");
+    const frequencyButtons = [...body.querySelectorAll("[data-frequency]")];
+    const amountButtons = [...body.querySelectorAll("[data-amount]")];
+    const status = body.querySelector("#donationStatus");
+    const submitButton = form.querySelector('[type="submit"]');
+    let frequency = "ONE_TIME";
+
+    frequencyButtons.forEach(button => button.addEventListener("click", () => {
+      frequency = button.dataset.frequency;
+      frequencyButtons.forEach(option => {
+        const selected = option === button;
+        option.classList.toggle("active", selected);
+        option.setAttribute("aria-pressed", String(selected));
+      });
+    }));
+
+    amountButtons.forEach(button => button.addEventListener("click", () => {
+      amountInput.value = button.dataset.amount;
+      amountButtons.forEach(option => {
+        const selected = option === button;
+        option.classList.toggle("selected", selected);
+        option.setAttribute("aria-pressed", String(selected));
+      });
+    }));
+
+    amountInput.addEventListener("input", () => {
+      amountButtons.forEach(button => {
+        const selected = button.dataset.amount === amountInput.value;
+        button.classList.toggle("selected", selected);
+        button.setAttribute("aria-pressed", String(selected));
+      });
+    });
+
+    form.addEventListener("submit", async event => {
+      event.preventDefault();
+      const email = form.elements.namedItem("email");
+      email.setCustomValidity(email.validity.typeMismatch ? "Please enter a valid email address." : "");
+      if (!form.reportValidity()) return;
+
+      const originalLabel = submitButton.textContent;
+      submitButton.disabled = true;
+      submitButton.textContent = "Checking payment availability…";
+      status.dataset.state = "pending";
+      status.textContent = "Checking payment availability…";
+      try {
+        const result = await window.AyushPaymentService?.createDonation({
+          amount: Number(amountInput.value),
+          currency: "INR",
+          frequency,
+          donorName: form.elements.namedItem("name").value.trim(),
+          donorEmail: email.value.trim(),
+          cause: "General Fund"
+        });
+        const message = result?.success && result.checkoutUrl
+          ? "Opening secure payment…"
+          : (result?.success ? "Online payment is currently unavailable. Please try again later." : (result?.message || "Online payment is currently unavailable. Please try again later."));
+        status.dataset.state = result?.success && result.checkoutUrl ? "pending" : "error";
+        status.textContent = message;
+        if (result?.success && result.checkoutUrl) window.location.assign(result.checkoutUrl);
+        else showToast(message, "error");
+      } catch (_) {
+        status.dataset.state = "error";
+        status.textContent = "Online payment is currently unavailable. Please try again later.";
+        showToast(status.textContent, "error");
+      } finally {
+        submitButton.disabled = false;
+        submitButton.textContent = originalLabel;
+      }
+    });
+  }
+
   const closeBtn = document.getElementById("closeModalBtn");
-  const presetBtns = document.querySelectorAll(".preset-btn");
-  const customAmountInput = document.getElementById("customAmountInput");
-  const proceedPayBtn = document.getElementById("proceedPayBtn");
-  const donorNameInput = document.getElementById("donorNameInput");
-  const donorEmailInput = document.getElementById("donorEmailInput");
-  const freqBtns = document.querySelectorAll(".freq-btn");
-  const paymentMethods = document.querySelectorAll(".payment-method-btn");
+  let lastTrigger = null;
 
   document.querySelectorAll('[data-action="donate"]').forEach(trigger => {
-    trigger.addEventListener("click", (e) => {
-      e.preventDefault();
-      const cause = trigger.getAttribute("data-cause");
-      if (cause) AyushState.activeCause = cause;
-      openDonationModal();
+    trigger.addEventListener("click", event => {
+      event.preventDefault();
+      lastTrigger = trigger;
+      modal.classList.add("active");
+      document.body.style.overflow = "hidden";
+      closeBtn?.focus();
     });
   });
-
-  function openDonationModal() {
-    modal.classList.add("active");
-    document.body.style.overflow = "hidden";
-    updateImpactExplainer();
-  }
 
   function closeDonationModal() {
     modal.classList.remove("active");
     document.body.style.overflow = "";
+    lastTrigger?.focus();
   }
 
   if (closeBtn) closeBtn.addEventListener("click", closeDonationModal);
@@ -251,231 +245,23 @@ function initDonationModal() {
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeDonationModal();
   });
-
-  freqBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      freqBtns.forEach(b => b.classList.remove("active"));
-      btn.classList.add("active");
-      AyushState.frequency = btn.getAttribute("data-freq") || "one-time";
-      updateImpactExplainer();
-    });
-  });
-
-  paymentMethods.forEach(method => {
-    method.addEventListener("click", () => {
-      paymentMethods.forEach(m => m.classList.remove("selected"));
-      method.classList.add("selected");
-    });
-  });
-
-  presetBtns.forEach(btn => {
-    btn.addEventListener("click", () => {
-      const amt = btn.getAttribute("data-amount");
-      if (customAmountInput) customAmountInput.value = amt;
-      updatePresetSelection(amt);
-      updateImpactExplainer();
-    });
-  });
-
-  function updatePresetSelection(amt) {
-    presetBtns.forEach(b => {
-      if (b.getAttribute("data-amount") === String(amt)) {
-        b.classList.add("selected");
-      } else {
-        b.classList.remove("selected");
+  document.addEventListener("keydown", event => {
+    if (!modal.classList.contains("active")) return;
+    if (event.key === "Escape") closeDonationModal();
+    if (event.key === "Tab") {
+      const focusable = [...modal.querySelectorAll('a[href], button:not([disabled])')];
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
       }
-    });
-  }
-
-  if (customAmountInput) {
-    customAmountInput.addEventListener("input", () => {
-      updatePresetSelection(customAmountInput.value);
-      updateImpactExplainer();
-    });
-  }
-
-  if (proceedPayBtn) {
-    proceedPayBtn.addEventListener("click", async () => {
-      const amountVal = parseFloat(customAmountInput ? customAmountInput.value : 50);
-      if (!Number.isFinite(amountVal) || amountVal < 5 || amountVal > 1000000 || amountVal % 5 !== 0) {
-        showToast("Enter an amount from 5 to 1,000,000 in steps of 5.", "error");
-        return;
-      }
-
-      const nameVal = donorNameInput ? donorNameInput.value.trim() : "";
-      const emailVal = donorEmailInput ? donorEmailInput.value.trim() : "";
-      if (!nameVal || !emailVal || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailVal)) {
-        showToast("Enter your name and a valid email address.", "error");
-        return;
-      }
-
-      proceedPayBtn.disabled = true;
-      proceedPayBtn.textContent = "Submitting Request...";
-
-      const result = await window.AyushAPI.processDonation({
-        amount: amountVal,
-        currency: AyushState.currency,
-        frequency: AyushState.frequency,
-        cause: AyushState.activeCause,
-        donorName: nameVal,
-        donorEmail: emailVal,
-        timestamp: new Date().toISOString()
-      });
-
-      proceedPayBtn.disabled = false;
-      proceedPayBtn.textContent = "Submit Donation Request";
-      if (!result.success || !result.requestId) {
-        showToast(result.message || "Could not submit your donation request. Please try again.", "error");
-        return;
-      }
-
-      closeDonationModal();
-      const sym = AyushState.currency === "INR" ? String.fromCharCode(8377) : "$";
-      showReceiptModal(nameVal, emailVal, `${sym}${amountVal}`, result.requestId);
-    });
-  }
-}
-
-function updateImpactExplainer() {
-  const badge = document.getElementById("impactExplainerBadge");
-  if (badge) badge.textContent = "This creates a pending request only. No payment or recurring charge is made.";
-}
-
-/* --------------------------------------------------------------------------
-   6. Donation Request Confirmation Modal
-   -------------------------------------------------------------------------- */
-function showReceiptModal(name, email, amountStr, requestId) {
-  let modal = document.getElementById("receiptModal");
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "receiptModal";
-    modal.className = "modal-overlay";
-    document.body.appendChild(modal);
-  }
-
-  const escapeHtml = value => String(value ?? "").replace(/[&<>"']/g, character => ({
-    "&": "&amp;", "<": "&lt;", ">": "&gt;", "\"": "&quot;", "'": "&#39;"
-  })[character]);
-  modal.innerHTML = `
-    <div class="modal-card" style="max-width: 500px;">
-      <button class="modal-close-btn" id="closeReceiptBtn" aria-label="Close">X</button>
-      <div class="modal-header">
-        <div class="modal-heart-icon" style="background:#dcfce7; color:#16a34a;">OK</div>
-        <h3 class="modal-title">Donation Request Received</h3>
-        <p class="modal-subtitle">This confirms your request only. No payment has been collected.</p>
-      </div>
-      <div class="receipt-certificate">
-        <div class="receipt-header"><strong>Ayush NGO</strong></div>
-        <div class="receipt-row"><span>Request ID:</span> <strong>${escapeHtml(requestId)}</strong></div>
-        <div class="receipt-row"><span>Name:</span> <strong>${escapeHtml(name)}</strong></div>
-        <div class="receipt-row"><span>Email:</span> <strong>${escapeHtml(email)}</strong></div>
-        <div class="receipt-row"><span>Requested amount:</span> <strong>${escapeHtml(amountStr)}</strong></div>
-        <div class="receipt-row"><span>Cause:</span> <span>${escapeHtml(AyushState.activeCause)}</span></div>
-        <div class="receipt-row"><span>Frequency:</span> <span>${escapeHtml(AyushState.frequency)}</span></div>
-        <div class="receipt-row"><span>Status:</span> <span>Pending payment</span></div>
-        <div class="receipt-row"><span>Date:</span> <span>${new Date().toLocaleDateString()}</span></div>
-      </div>
-      <div style="margin-top:20px; display:flex; gap:10px;">
-        <button class="btn btn-primary" style="flex:1;" onclick="window.print();">Print / Save</button>
-        <button class="btn btn-outline-white" id="closeReceiptDoneBtn" style="color:var(--color-text-main); border-color:var(--color-border);">Done</button>
-      </div>
-    </div>`;
-  modal.querySelector("#closeReceiptBtn").addEventListener("click", () => modal.classList.remove("active"));
-  modal.querySelector("#closeReceiptDoneBtn").addEventListener("click", () => modal.classList.remove("active"));
-  modal.classList.add("active");
-}
-/* --------------------------------------------------------------------------
-   7. Volunteer Application Modal
-   -------------------------------------------------------------------------- */
-function initVolunteerModal() {
-  let modal = document.getElementById("volunteerModal");
-  if (!modal) {
-    modal = document.createElement("div");
-    modal.id = "volunteerModal";
-    modal.className = "modal-overlay";
-    modal.innerHTML = `
-      <div class="modal-card volunteer-modal-card">
-        <button class="modal-close-btn" id="closeVolunteerBtn">✕</button>
-        <div class="modal-header">
-          <div class="modal-heart-icon">🤝</div>
-          <h3 class="modal-title">Join Us As A Volunteer</h3>
-          <p class="modal-subtitle">Share your time & skills to transform lives on the ground.</p>
-        </div>
-        <form id="volunteerForm">
-          <div class="form-group">
-            <label class="form-label">FULL NAME</label>
-            <input type="text" id="volName" class="form-control" placeholder="e.g. Ananya Sharma" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">EMAIL ADDRESS</label>
-            <input type="email" id="volEmail" class="form-control" placeholder="ananya@example.com" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">PHONE NUMBER</label>
-            <input type="tel" id="volPhone" class="form-control" placeholder="+91 98765 43210" required>
-          </div>
-          <div class="form-group">
-            <label class="form-label">PRIMARY AREA OF INTEREST</label>
-            <select id="volSkill" class="form-control" style="background:var(--color-bg-card);">
-              <option value="Teaching & Child Education">Teaching & Child Education</option>
-              <option value="Healthcare & Medical Camps">Healthcare & Medical Camps</option>
-              <option value="Environment & Tree Plantation">Environment & Tree Plantation</option>
-              <option value="Tech, Design & Social Media">Tech, Design & Social Media</option>
-              <option value="Disaster Relief Ground Support">Disaster Relief Ground Support</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">YOUR CITY / REGION</label>
-            <input type="text" id="volCity" class="form-control" placeholder="e.g. New Delhi" required>
-          </div>
-          <button type="submit" class="btn btn-primary btn-block">Submit Application 🚀</button>
-        </form>
-      </div>
-    `;
-    document.body.appendChild(modal);
-
-    modal.querySelector("#closeVolunteerBtn").addEventListener("click", () => modal.classList.remove("active"));
-    modal.addEventListener("click", (e) => { if (e.target === modal) modal.classList.remove("active"); });
-
-    modal.querySelector("#volunteerForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const name = document.getElementById("volName").value.trim();
-      const email = document.getElementById("volEmail").value.trim();
-      const phone = document.getElementById("volPhone").value.trim();
-      const skill = document.getElementById("volSkill").value;
-      const city = document.getElementById("volCity").value.trim();
-
-      const btn = e.target.querySelector("button[type='submit']");
-      btn.disabled = true;
-      btn.textContent = "Registering...";
-
-      const result = await window.AyushAPI.submitVolunteerApplication({ name, email, phone, skill, city, date: new Date().toISOString() });
-      if (!result.success) {
-        btn.disabled = false;
-        btn.textContent = "Submit Application";
-        showToast(result.message || "Could not submit your application. Please try again.", "error");
-        return;
-      }
-
-      btn.disabled = false;
-      btn.textContent = "Submit Application 🚀";
-      modal.classList.remove("active");
-      e.target.reset();
-      showToast(`Thanks, ${name}. Your volunteer application has been received.`, "success");
-    });
-  }
-
-  document.querySelectorAll('[data-action="volunteer"], .announcement-link[href="contact.html"]').forEach(btn => {
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
-      modal.classList.add("active");
-    });
+    }
   });
 }
-
-/* --------------------------------------------------------------------------
-   8. FAQ Accordion (in Contact Us)
-   -------------------------------------------------------------------------- */
 function initFaqAccordion() {
   const faqItems = document.querySelectorAll(".faq-item");
   if (!faqItems.length) return;
@@ -511,16 +297,29 @@ function initNewsletterForm() {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       const input = form.querySelector(".newsletter-input");
+      const honeypot = form.elements.namedItem("bot-field");
       if (!input || !input.value.trim()) return;
+
+      input.setCustomValidity(input.validity.valueMissing || input.validity.typeMismatch
+        ? "Please enter a valid email address."
+        : "");
+      if (!form.reportValidity()) return;
+
+      if (honeypot?.value) {
+        form.reset();
+        return;
+      }
 
       const email = input.value.trim();
       const submitButton = form.querySelector('button[type="submit"]');
       if (submitButton) submitButton.disabled = true;
       try {
-        const result = await window.AyushAPI.submitNewsletterSubscription({ email });
+        const result = window.AyushAPI.isConfigured()
+          ? await window.AyushAPI.submitNewsletterSubscription({ email })
+          : await window.AyushAPI.submitNetlifyForm(form);
         if (result.success) {
           input.value = "";
-          showToast(result.message || "Your signup request was recorded.", "success");
+          showToast("Thank you for subscribing!", "success");
         } else {
           showToast(result.message || "Could not submit your signup. Please try again.", "error");
         }
@@ -551,8 +350,10 @@ function initGalleryLightbox() {
     modal.className = "lightbox-modal";
     modal.innerHTML = `
       <div class="lightbox-content">
-        <button class="lightbox-close" aria-label="Close image">✕</button>
+        <button class="lightbox-close" type="button" aria-label="Close image">✕</button>
+        <button class="lightbox-prev" type="button" aria-label="Previous image">←</button>
         <img src="" alt="High resolution preview" class="lightbox-image">
+        <button class="lightbox-next" type="button" aria-label="Next image">→</button>
         <div class="lightbox-caption"></div>
       </div>
     `;
@@ -562,83 +363,123 @@ function initGalleryLightbox() {
   const modalImg = modal.querySelector(".lightbox-image");
   const caption = modal.querySelector(".lightbox-caption");
   const closeBtn = modal.querySelector(".lightbox-close");
+  const previousBtn = modal.querySelector(".lightbox-prev");
+  const nextBtn = modal.querySelector(".lightbox-next");
   let returnFocusTo = null;
+  let currentImages = [];
+  let currentIndex = 0;
 
   galleryItems.forEach(img => {
-    const item = img.parentElement;
-    const overlay = item.querySelector(".gallery-item-overlay");
-    const inner = document.createElement("div");
-    const front = document.createElement("div");
-    const back = document.createElement("div");
-    const openButton = document.createElement("button");
-    const title = img.alt || "Gallery photo";
-
-    inner.className = "gallery-card-inner";
-    front.className = "gallery-card-face gallery-card-front";
-    back.className = "gallery-card-face gallery-card-back";
-    front.setAttribute("role", "button");
-    front.setAttribute("tabindex", "0");
-    front.setAttribute("aria-label", `Flip card for ${title}`);
-    front.setAttribute("aria-expanded", "false");
-    back.setAttribute("aria-hidden", "true");
-    openButton.className = "gallery-open-button";
-    openButton.type = "button";
-    openButton.tabIndex = -1;
-    openButton.textContent = "Open image";
-    back.append(Object.assign(document.createElement("p"), { textContent: title }), openButton);
-    if (overlay) front.append(img, overlay);
-    else front.append(img);
-    inner.append(front, back);
-    item.replaceChildren(inner);
-    item.setAttribute("role", "group");
-    item.setAttribute("aria-label", title);
-
-    const flip = isFlipped => {
-      item.classList.toggle("is-flipped", isFlipped);
-      front.setAttribute("aria-expanded", String(isFlipped));
-      back.setAttribute("aria-hidden", String(!isFlipped));
-      openButton.tabIndex = isFlipped ? 0 : -1;
-      if (isFlipped) openButton.focus();
-      else front.focus();
-    };
+    const item = img.closest(".gallery-item") || img.parentElement;
+    const title = item.querySelector(".gallery-item-overlay p")?.textContent.trim() || img.alt || "Gallery photo";
+    item.setAttribute("role", "button");
+    item.setAttribute("tabindex", "0");
+    item.setAttribute("aria-label", `Open image: ${title}`);
     const open = () => {
-      returnFocusTo = openButton;
-      modalImg.src = img.src;
-      modalImg.alt = title;
-      caption.textContent = title;
+      returnFocusTo = item;
+      currentImages = [...document.querySelectorAll(".gallery-item:not([hidden]) img")];
+      currentIndex = currentImages.indexOf(img);
+      showCurrentImage();
       modal.classList.add("active");
+      document.body.style.overflow = "hidden";
       closeBtn.focus();
     };
-
-    front.addEventListener("click", () => flip(true));
-    front.addEventListener("keydown", event => {
+    item.addEventListener("click", open);
+    item.addEventListener("keydown", event => {
       if (event.key === "Enter" || event.key === " ") {
         event.preventDefault();
-        flip(true);
+        open();
       }
     });
-    back.addEventListener("click", event => {
-      if (event.target !== openButton) flip(false);
-    });
-    back.addEventListener("keydown", event => {
-      if (event.key === "Escape") flip(false);
-    });
-    openButton.addEventListener("click", open);
   });
+
+  function showCurrentImage() {
+    const img = currentImages[currentIndex];
+    if (!img) return;
+    modalImg.src = img.currentSrc || img.src;
+    modalImg.alt = img.alt || "Gallery photo";
+    caption.textContent = img.closest(".gallery-item")?.querySelector(".gallery-item-overlay p")?.textContent.trim() || img.alt || "Gallery photo";
+    const multiple = currentImages.length > 1;
+    previousBtn.hidden = !multiple;
+    nextBtn.hidden = !multiple;
+  }
+
+  const moveImage = direction => {
+    if (currentImages.length < 2) return;
+    currentIndex = (currentIndex + direction + currentImages.length) % currentImages.length;
+    showCurrentImage();
+  };
 
   modal.setAttribute("role", "dialog");
   modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("aria-label", "Gallery image viewer");
   const closeModal = () => {
     modal.classList.remove("active");
+    document.body.style.overflow = "";
     if (returnFocusTo) returnFocusTo.focus();
   };
   closeBtn.addEventListener("click", closeModal);
+  previousBtn.addEventListener("click", () => moveImage(-1));
+  nextBtn.addEventListener("click", () => moveImage(1));
   document.addEventListener("keydown", event => {
-    if (event.key === "Escape" && modal.classList.contains("active")) closeModal();
+    if (!modal.classList.contains("active")) return;
+    if (event.key === "Escape") closeModal();
+    if (event.key === "ArrowLeft") moveImage(-1);
+    if (event.key === "ArrowRight") moveImage(1);
   });
   modal.addEventListener("click", (e) => {
     if (e.target === modal) closeModal();
   });
+}
+
+function initGalleryContent() {
+  const grid = document.getElementById("galleryGrid");
+  const gallery = window.AYUSH_SITE_DATA?.gallery;
+  if (!grid || !gallery) return;
+
+  const verified = gallery.verifiedImages.length > 0;
+  const photos = verified ? gallery.verifiedImages : gallery.illustrativeStock;
+  const note = document.querySelector(".gallery-demo-note");
+  if (note) {
+    const label = document.createElement("strong");
+    label.textContent = verified ? "Verified gallery" : "Illustrative gallery";
+    const text = document.createElement("p");
+    text.append(label, document.createTextNode(verified
+      ? " — images provided and approved by Ayush NGO."
+      : " — these stock photographs are visual examples, not documentation of Ayush NGO programs or events."));
+    const icon = document.createElement("span");
+    icon.textContent = "ⓘ";
+    icon.setAttribute("aria-hidden", "true");
+    note.replaceChildren(icon, text);
+  }
+
+  const fragment = document.createDocumentFragment();
+  photos.forEach(photo => {
+    const card = document.createElement("div");
+    card.className = "gallery-item";
+    card.dataset.category = photo.category;
+    const image = document.createElement("img");
+    image.src = photo.src;
+    image.alt = photo.alt;
+    image.loading = "lazy";
+    image.decoding = "async";
+    const overlay = document.createElement("div");
+    overlay.className = "gallery-item-overlay";
+    const affordance = document.createElement("span");
+    affordance.textContent = "↗";
+    affordance.setAttribute("aria-hidden", "true");
+    const caption = document.createElement("p");
+    caption.textContent = photo.caption;
+    overlay.append(affordance, caption);
+    card.append(image, overlay);
+    fragment.append(card);
+  });
+  grid.replaceChildren(fragment);
+
+  const count = document.getElementById("galleryCount");
+  const results = document.getElementById("galleryResults");
+  if (count) count.textContent = String(photos.length).padStart(2, "0");
+  if (results) results.textContent = `Showing ${photos.length} ${photos.length === 1 ? "story" : "stories"}`;
 }
 
 /* --------------------------------------------------------------------------
@@ -656,13 +497,23 @@ function initContactForm() {
     const emailInput = document.getElementById("contactEmail");
     const subjectInput = document.getElementById("contactSubject");
     const messageInput = document.getElementById("contactMessage");
+    const phoneInput = document.getElementById("contactPhone");
+    const status = document.getElementById("contactStatus");
+    const honeypot = contactForm.elements.namedItem("bot-field");
+
+    if (!contactForm.reportValidity()) return;
+    if (honeypot?.value) {
+      contactForm.reset();
+      return;
+    }
 
     const payload = {
       name: nameInput ? nameInput.value.trim() : "",
       email: emailInput ? emailInput.value.trim() : "",
+      phone: phoneInput ? phoneInput.value.trim() : "",
+      botField: honeypot ? honeypot.value : "",
       subject: subjectInput ? subjectInput.value.trim() : "",
       message: messageInput ? messageInput.value.trim() : "",
-      submittedAt: new Date().toISOString()
     };
 
     if (!payload.name || !payload.email || !payload.subject || !payload.message) {
@@ -678,22 +529,93 @@ function initContactForm() {
       submitBtn.disabled = true;
       submitBtn.innerHTML = 'Sending... ✈';
     }
+    if (status) { status.textContent = "Sending your message…"; status.dataset.state = "pending"; }
 
     try {
-      const response = await window.AyushAPI.submitContactMessage(payload);
+      const response = window.AyushAPI.isConfigured()
+        ? await window.AyushAPI.submitContactMessage(payload)
+        : await window.AyushAPI.submitNetlifyForm(contactForm);
       if (!response.success) {
+        if (status) { status.textContent = response.message || "Your message could not be sent. Please try again."; status.dataset.state = "error"; }
         showToast(response.message || "Your message could not be sent. Please try again.", "error");
         return;
       }
+      if (status) { status.textContent = response.message || "Your message has been received."; status.dataset.state = "success"; }
       showToast(response.message || "Your message has been received.", "success");
       contactForm.reset();
     } catch (_) {
+      if (status) { status.textContent = "Your message could not be sent. Please try again later."; status.dataset.state = "error"; }
       showToast("Your message could not be sent. Please try again later.", "error");
     } finally {
       if (submitBtn) {
         submitBtn.disabled = false;
         submitBtn.innerHTML = 'Send Message ✈';
       }
+    }
+  });
+}
+
+function initVolunteerPageForm() {
+  const form = document.getElementById("volunteerPageForm");
+  if (!form) return;
+  const interestOptions = [...form.querySelectorAll(".volunteer-interest-option")];
+  const interestValue = document.getElementById("volunteerInterestValue");
+  const status = document.getElementById("volunteerPageStatus");
+  const updateInterests = () => {
+    const selected = interestOptions.filter(option => option.checked).map(option => option.value);
+    if (interestValue) interestValue.value = selected.join(", ");
+    if (interestOptions[0]) interestOptions[0].setCustomValidity(selected.length ? "" : "Choose at least one area of interest.");
+  };
+  interestOptions.forEach(option => option.addEventListener("change", updateInterests));
+  updateInterests();
+
+  form.addEventListener("submit", async event => {
+    event.preventDefault();
+    updateInterests();
+    if (!form.reportValidity()) return;
+    const honeypot = form.elements.namedItem("bot-field");
+    if (honeypot?.value) {
+      form.reset();
+      return;
+    }
+
+    const button = form.querySelector('button[type="submit"]');
+    const payload = {
+      name: form.elements.namedItem("name").value.trim(),
+      email: form.elements.namedItem("email").value.trim(),
+      phone: form.elements.namedItem("phone").value.trim(),
+      age: Number(form.elements.namedItem("age").value),
+      city: form.elements.namedItem("city").value.trim(),
+      state: form.elements.namedItem("state").value.trim(),
+      occupation: form.elements.namedItem("occupation").value.trim(),
+      skill: form.elements.namedItem("skill").value.trim(),
+      areasOfInterest: interestValue?.value || "",
+      availability: form.elements.namedItem("availability").value.trim(),
+      preference: form.elements.namedItem("preference").value,
+      motivation: form.elements.namedItem("motivation").value.trim(),
+      botField: ""
+    };
+
+    if (button) { button.disabled = true; button.dataset.originalText = button.textContent; button.textContent = "Sending…"; }
+    if (status) { status.textContent = "Sending your application…"; status.dataset.state = "pending"; }
+    try {
+      const response = window.AyushAPI.isConfigured()
+        ? await window.AyushAPI.submitVolunteerApplication(payload)
+        : await window.AyushAPI.submitNetlifyForm(form);
+      if (!response.success) {
+        if (status) { status.textContent = response.message || "Your application could not be sent."; status.dataset.state = "error"; }
+        showToast(response.message || "Your application could not be sent. Please try again.", "error");
+        return;
+      }
+      form.reset();
+      updateInterests();
+      if (status) { status.textContent = response.message || "Your volunteer interest has been received."; status.dataset.state = "success"; }
+      showToast(response.message || "Your volunteer interest has been received.", "success");
+    } catch (_) {
+      if (status) { status.textContent = "Your application could not be sent. Please try again later."; status.dataset.state = "error"; }
+      showToast("Your application could not be sent. Please try again later.", "error");
+    } finally {
+      if (button) { button.disabled = false; button.textContent = button.dataset.originalText || "Send volunteer interest"; }
     }
   });
 }
@@ -706,20 +628,28 @@ function initGalleryFilters() {
   const items = document.querySelectorAll(".gallery-item");
   if (!tabs.length || !items.length) return;
 
+  const results = document.getElementById("galleryResults");
+  const count = document.getElementById("galleryCount");
+
   tabs.forEach(tab => {
     tab.addEventListener("click", () => {
-      tabs.forEach(t => t.classList.remove("active"));
+      tabs.forEach(t => {
+        t.classList.remove("active");
+        t.setAttribute("aria-pressed", "false");
+      });
       tab.classList.add("active");
+      tab.setAttribute("aria-pressed", "true");
 
       const category = tab.getAttribute("data-filter");
+      let visibleCount = 0;
       items.forEach(item => {
         const itemCat = item.getAttribute("data-category");
-        if (category === "all" || itemCat === category) {
-          item.style.display = "block";
-        } else {
-          item.style.display = "none";
-        }
+        const isVisible = category === "all" || itemCat === category;
+        item.hidden = !isVisible;
+        if (isVisible) visibleCount += 1;
       });
+      if (results) results.textContent = `Showing ${visibleCount} ${visibleCount === 1 ? "story" : "stories"}`;
+      if (count) count.textContent = String(visibleCount).padStart(2, "0");
     });
   });
 }
@@ -758,14 +688,17 @@ async function initYearAndBackendStatus() {
     yearSpan.textContent = new Date().getFullYear();
   }
 
-  if (window.AyushAPI) {
+  if (window.AyushAPI && !window.AyushAPI.isConfigured()) {
+    const statusElem = document.getElementById("backendStatusIndicator");
+    if (statusElem) statusElem.textContent = "Public forms use Netlify Forms.";
+  } else if (window.AyushAPI) {
     const isOnline = await window.AyushAPI.isBackendOnline();
     const statusElem = document.getElementById("backendStatusIndicator");
     if (statusElem) {
       if (isOnline) {
-        statusElem.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;margin-right:6px;"></span>Java Backend: <strong>Live Connected</strong>`;
+        statusElem.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10b981;margin-right:6px;"></span>Backend: <strong>Live Connected</strong>`;
       } else {
-      statusElem.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:6px;"></span>Java Backend: <strong>Offline</strong>`;
+      statusElem.innerHTML = `<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#f59e0b;margin-right:6px;"></span>Backend: <strong>Offline</strong>`;
       }
     }
   }

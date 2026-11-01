@@ -2,18 +2,31 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030407">
   <title>My profile | Ayush NGO</title><meta name="description" content="Manage your Ayush NGO account profile.">
+  <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/style.css">
+<link rel="canonical" href="https://ayushngo.netlify.app/profile">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ayush NGO">
+  <meta property="og:title" content="My profile | Ayush NGO">
+  <meta property="og:description" content="Manage your Ayush NGO account profile.">
+  <meta property="og:url" content="https://ayushngo.netlify.app/profile">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="My profile | Ayush NGO">
+  <meta name="twitter:description" content="Manage your Ayush NGO account profile.">
+<meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body class="account-page">
-  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">🌱</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span></span></a><nav class="account-header-nav"><a href="dashboard.html">My donations</a><button type="button" id="logoutButton" class="account-text-button">Sign out</button></nav></header>
+  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">ðŸŒ±</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">AYUSH NGO WEBSITE</span></span></a><nav class="account-header-nav" aria-label="Website navigation"><a href="index.html">Home</a><a href="about.html">About Us</a><a href="work.html">Our Work</a><a href="gallery.html">Gallery</a><a href="dashboard.html">My donations</a><button type="button" id="logoutButton" class="account-text-button">Sign out</button></nav><button type="button" class="theme-toggle-btn">Dark</button></header>
   <main class="account-shell account-shell-wide">
     <section class="account-card account-card-wide">
-      <div class="profile-heading"><div class="profile-avatar" id="profileAvatar" aria-hidden="true">A</div><div><p class="account-eyebrow">YOUR ACCOUNT</p><h1 id="profileTitle">My profile</h1><p id="memberSince" class="account-intro">Loading profile…</p></div></div>
-      <div id="profileAlert" class="account-status" role="status" aria-live="polite"></div>
+      <div class="profile-heading"><div class="profile-avatar" id="profileAvatar" aria-hidden="true">A</div><div><p class="account-eyebrow">YOUR ACCOUNT</p><h1 id="profileTitle">My profile</h1><p id="memberSince" class="account-intro">Loading profileâ€¦</p></div></div>
+      <div class="donation-summary-grid profile-payment-summary" aria-label="Accepted payments"><article class="donation-summary-card"><span>Accepted payments total</span><strong id="profilePaidTotal">INR 0</strong><small>Only admin-accepted payments</small></article><article class="donation-summary-card"><span>Accepted payments</span><strong id="profilePaidCount">0</strong><small>Confirmed by the administrator</small></article></div><div id="profileAlert" class="account-status" role="status" aria-live="polite"></div>
       <form id="profileForm" class="account-form account-profile-form" novalidate>
         <label for="profileName">Full name</label><input id="profileName" type="text" maxlength="120" autocomplete="name" required>
-        <label for="profileEmail">Verified email</label><input id="profileEmail" type="email" readonly aria-describedby="emailVerificationState">
+        <label for="profileEmail">Email address</label><input id="profileEmail" type="email" readonly aria-describedby="emailVerificationState">
         <p id="emailVerificationState" class="account-hint"></p>
         <label for="profilePhone">Phone number</label><input id="profilePhone" type="tel" maxlength="40" autocomplete="tel">
         <label for="profileAddress">Address <span class="account-optional">Optional</span></label><textarea id="profileAddress" rows="3" maxlength="500" autocomplete="street-address"></textarea>
@@ -21,6 +34,8 @@
       </form>
     </section>
   </main>
-  <script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/site-data.js"></script>
+<script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/payment-service.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/theme-ui.js"></script>
 </body>
 </html>

@@ -1,52 +1,17 @@
-# Ayush NGO website
+# Ayush NGO
 
-A responsive multi-page NGO website with a Java API for contact forms, donation requests, accounts, profiles, and account-specific donation history.
+This folder uses a local SQLite database for account registration, sign-in, profiles, and the other backend records. The database file is `%LOCALAPPDATA%\AyushNGO\ayush_ngo_db.db`; it is separate from the website source and is ignored by Git.
 
-## Pages
+## Start locally
 
-- `index.html` — home page with the 3D Earth hero and public donation request form
-- `about.html`, `work.html`, `gallery.html`, `blog.html`, `contact.html`, and `showcase.html` — public site pages
-- `login.html` and `signup.html` — account access
-- `profile.html` — account profile
-- `dashboard.html` — donation requests associated with the signed-in email
-- `terms.html` and `privacy.html` — account information
+Requirements: Node.js 22.5 or newer and VS Code Live Server.
 
-## Run locally
+1. Start the backend from this folder with `.\run-backend.ps1`. Keep the terminal open. It uses the existing local SQLite database and listens on port 8085.
+2. If this is the first setup on a computer, run `.\setup-local.ps1` once instead. It creates the database schema and local secret, then starts the backend.
+3. Serve this folder in VS Code Live Server on port 5500. Open `http://127.0.0.1:5500/signup.html`; new accounts are stored in the SQLite `users` table. Check backend health at `http://127.0.0.1:8085/api/health`.
 
-Requires JDK 17 or newer. From the repository root, run:
+The frontend talks to the local Express backend, which writes records into SQLite. No remote database service or MySQL account is required. VS Code's Database Client extension can open `%LOCALAPPDATA%\AyushNGO\ayush_ngo_db.db` directly; the schema is in `backend-node/schema.sql`.
 
-```powershell
-.\run-backend.ps1
-```
+The supplied `QR_CODE.jpeg` is copied into local uploads on first backend start and its UPI ID (`ayushsk2041@oksbi`), displayed payee (`Ayush Raj`), image path, and scan instructions are saved in `payment_settings`. The donation page displays this saved QR after sign-in. Donation submissions save their amount and transaction reference for manual verification; this does not initiate or verify a bank payment automatically.
 
-The Java server compiles and starts on port `8085`. Open `http://localhost:8085/`. If using a separate Live Server on port `5500`, the frontend connects to the Java API on `8085`.
-
-New accounts are stored in `%USERPROFILE%\.ayush-ngo-data\accounts.tsv`. Passwords are saved as salted PBKDF2 hashes. Account sessions are held in memory and end when the Java server restarts, so sign in again after a restart. Local application data is outside the website and must not be committed.
-
-## Account and donation behavior
-
-- Signup creates a local account; sign in uses that account's email and password.
-- Profile details are scoped to the signed-in account.
-- Donation history matches donation requests by the signed-in account's email address.
-- Donation requests remain `PENDING_PAYMENT`. The site does not collect money or claim that a payment succeeded.
-- Successful totals only include records explicitly marked `SUCCEEDED`; no payment provider or verified payment webhook is configured.
-- Password reset, email verification, Google sign in, and administrator access are not configured in the Java SE server.
-
-## API routes
-
-- `GET /api/health`
-- `GET /api/auth/csrf`, `GET /api/auth/me`, `GET /api/auth/options`
-- `POST /api/auth/register`, `POST /api/auth/login`, `POST /api/auth/logout`
-- `GET /api/profile/me`, `PUT /api/profile/me`
-- `GET /api/donations/me`, `GET /api/donations/me/summary`
-- `POST /api/contact`, `POST /api/newsletter`, `POST /api/volunteer`, `POST /api/donate`
-
-## Hosting notes
-
-Netlify builds the static frontend with `node scripts/build-site.js`. Set `JAVA_API_URL` in the Netlify build environment to the public HTTPS base URL of a separately hosted Java API. Do not place credentials in frontend configuration. The API's CORS origin must be set to the exact deployed website origin.
-
-`backend/Dockerfile` and `render.yaml` provide the Java SE API container setup. Configure a private persistent data directory for account and form records. Production use still requires a real email verification and reset flow, a supported database, rate limiting, and a legitimate payment provider with server-side verification.
-
-## Content and data
-
-Project and news content is illustrative. Verify organizational details, impact claims, addresses, and imagery before publication. Runtime data and credentials are excluded from Git.
+To create the first administrator, run `.\bootstrap-admin.ps1` and enter the details at its prompts. The database starts empty; it does not create sample accounts.

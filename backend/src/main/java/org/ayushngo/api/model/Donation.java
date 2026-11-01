@@ -49,7 +49,7 @@ public class Donation {
     @Column(name = "provider_reference", unique = true, length = 160)
     private String providerReference;
 
-    @Column(name = "created_at", nullable = false, insertable = false, updatable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
     @Column(name = "paid_at")
@@ -61,9 +61,15 @@ public class Donation {
     protected Donation() { }
     public Donation(UserAccount user, String donorName, String donorEmail, BigDecimal amount, String currency,
                     Frequency frequency, String projectName) {
+        this(user, donorName, donorEmail, amount, currency, frequency, projectName, null, Instant.now());
+    }
+    public Donation(UserAccount user, String donorName, String donorEmail, BigDecimal amount, String currency,
+                    Frequency frequency, String projectName, String providerReference, Instant createdAt) {
         this.user = user; this.donorName = donorName; this.donorEmail = donorEmail; this.amount = amount;
         this.currency = currency; this.frequency = frequency; this.projectName = projectName;
         this.status = Status.PENDING_PAYMENT;
+        this.providerReference = providerReference;
+        this.createdAt = createdAt;
     }
     public UUID getId() { return id; }
     public UserAccount getUser() { return user; }

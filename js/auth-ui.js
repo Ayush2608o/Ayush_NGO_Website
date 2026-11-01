@@ -1,4 +1,4 @@
-/* Account pages use Spring-managed sessions. This file keeps the public pages anonymous by default. */
+/* Account navigation and profile forms use the local SQLite-backed session service. */
 document.addEventListener("DOMContentLoaded", () => {
   initAccountNavigation();
   initPasswordToggles();
@@ -6,8 +6,6 @@ document.addEventListener("DOMContentLoaded", () => {
   initSignupForm();
   initProfilePage();
   initDonationDashboard();
-  initVerificationPage();
-  initPasswordResetPage();
   initLogoutButtons();
 });
 
@@ -26,8 +24,11 @@ function setBusy(button, busy, busyText, idleText) {
 }
 
 function safeReturnPath() {
-  const next = new URLSearchParams(window.location.search).get("next") || "dashboard.html";
-  return /^(dashboard|profile)\.html$/.test(next) ? next : "dashboard.html";
+  const next = new URLSearchParams(window.location.search).get("next") || "index.html#myProfileSection";
+  if (next === "dashboard.html") return "index.html#myDonationsSection";
+  if (next === "profile.html") return "index.html#myProfileSection";
+  return next === "index.html#myProfileSection" || next === "index.html#myDonationsSection"
+    ? next : "index.html#myProfileSection";
 }
 
 async function initAccountNavigation() {
@@ -42,8 +43,20 @@ async function initAccountNavigation() {
   const profile = document.createElement("li");
   profile.className = "nav-account-profile";
   profile.hidden = true;
-  profile.innerHTML = '<a class="nav-link" href="profile.html">My profile</a>';
-  menu.append(signin, signup, profile);
+  profile.innerHTML = '<a class="nav-link" href="index.html#myProfileSection">My profile</a>';
+  const donations = document.createElement("li");
+  donations.className = "nav-account-dashboard";
+  donations.hidden = true;
+  donations.innerHTML = '<a class="nav-link" href="index.html#myDonationsSection">My donations</a>';
+  const adminPage = document.createElement("li");
+  adminPage.className = "nav-account-admin";
+  adminPage.hidden = true;
+  adminPage.innerHTML = '<a class="nav-link" href="admin.html">Payment review</a>';
+  const logout = document.createElement("li");
+  logout.className = "nav-account-logout";
+  logout.hidden = true;
+  logout.innerHTML = '<button type="button" id="logoutButton" class="nav-link account-nav-logout">Sign out</button>';
+  menu.append(signin, signup, profile, donations, adminPage, logout);
 
   const options = await window.AyushAPI.get("/auth/options");
   document.querySelectorAll("#googleLogin, #googleSignup").forEach(link => {
@@ -58,6 +71,13 @@ async function initAccountNavigation() {
     signin.hidden = true;
     signup.hidden = true;
     profile.hidden = false;
+    donations.hidden = false;
+    adminPage.hidden = !(me.user.role === "ADMIN" && me.user.email?.toLowerCase() === "ayushsk2041@gmail.com");
+    logout.hidden = false;
+    document.querySelectorAll('.footer-links-list a[href="login.html"], .footer-links-list a[href="signup.html"]').forEach(link => {
+      const item = link.closest("li");
+      if (item) item.hidden = true;
+    });
   }
 }
 
@@ -77,6 +97,14 @@ function initPasswordToggles() {
 function initLoginForm() {
   const form = document.getElementById("loginForm");
   if (!form) return;
+  const redirectIfSignedIn = async () => {
+    const current = await window.AyushAPI.get("/auth/me");
+    if (current.success && current.user) window.location.replace(safeReturnPath());
+  };
+  redirectIfSignedIn();
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) redirectIfSignedIn();
+  });
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const button = form.querySelector('[type="submit"]');
@@ -94,7 +122,7 @@ function initLoginForm() {
       accountStatus(status, result.message || "Sign-in failed. Check your details and verification status.", "error");
       return;
     }
-    window.location.assign(safeReturnPath());
+    window.location.replace(safeReturnPath());
   });
 }
 
@@ -138,28 +166,71 @@ async function requireUser(statusElement) {
   const result = await window.AyushAPI.get("/auth/me");
   if (!result.success || !result.user) {
     if (statusElement) accountStatus(statusElement, "Sign in to view this page.", "error");
-    window.setTimeout(() => window.location.assign("login.html?next=" + encodeURIComponent(window.location.pathname.split("/").pop())), 500);
+    const page = window.location.pathname.split("/").pop();
+    const next = page === "dashboard.html" ? "index.html#myDonationsSection" : "index.html#myProfileSection";
+    window.setTimeout(() => window.location.assign("login.html?next=" + encodeURIComponent(next)), 500);
     return null;
   }
   return result.user;
 }
 
+async function refreshProfilePaymentSummary() {
+  const paymentSummary = await window.AyushAPI.get("/profile/me");
+  const totalElement = document.getElementById("profilePaidTotal");
+  const countElement = document.getElementById("profilePaidCount");
+  if (!paymentSummary.success) return;
+  if (totalElement) totalElement.textContent = `INR ${Number(paymentSummary.summary?.total || 0).toLocaleString(undefined, { maximumFractionDigits: 2 })}`;
+  if (countElement) countElement.textContent = String(paymentSummary.summary?.verified_count || 0);
+}
+
 function initProfilePage() {
   const form = document.getElementById("profileForm");
   if (!form) return;
+  const homeSection = document.getElementById("myProfileSection");
+  const isHomeProfile = form.dataset.homeProfile === "true";
   const load = async () => {
-    const user = await requireUser(document.getElementById("profileAlert"));
-    if (!user) return;
+    let user;
+    if (isHomeProfile) {
+      if (window.location.hash !== "#myProfileSection") {
+        homeSection.hidden = true;
+        return;
+      }
+      const current = await window.AyushAPI.get("/auth/me");
+      user = current.success ? current.user : null;
+      if (!user || window.location.hash !== "#myProfileSection") {
+        homeSection.hidden = true;
+        return;
+      }
+      homeSection.hidden = false;
+    } else {
+      user = await requireUser(document.getElementById("profileAlert"));
+      if (!user) return;
+    }
     document.getElementById("profileTitle").textContent = user.fullName;
     document.getElementById("profileAvatar").textContent = (user.fullName || "A").trim().charAt(0).toUpperCase();
-    document.getElementById("memberSince").textContent = user.memberSince ? `Member since ${new Date(user.memberSince).toLocaleDateString()}` : "Your account profile";
+    const registeredAt = user.createdAt || user.memberSince || user.created_at;
+    document.getElementById("memberSince").textContent = registeredAt ? `Member since ${new Date(registeredAt).toLocaleDateString()}` : "Your account profile";
     document.getElementById("profileName").value = user.fullName || "";
     document.getElementById("profileEmail").value = user.email || "";
-    document.getElementById("emailVerificationState").textContent = user.emailVerified ? "Email verified" : "Email verification required";
+    document.getElementById("emailVerificationState").textContent = user.emailVerified ? "Email verified" : "Email verification is not configured";
     document.getElementById("profilePhone").value = user.phone || "";
     document.getElementById("profileAddress").value = user.address || "";
+    await refreshProfilePaymentSummary();
+    if (isHomeProfile && window.location.hash === "#myProfileSection") {
+      requestAnimationFrame(() => homeSection.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
   };
   load();
+  if (isHomeProfile) window.addEventListener("hashchange", load);
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) load();
+  });
+  window.setInterval(() => {
+    const profileVisible = isHomeProfile
+      ? window.location.hash === "#myProfileSection"
+      : window.location.pathname.endsWith("profile.html");
+    if (profileVisible && document.visibilityState === "visible") refreshProfilePaymentSummary();
+  }, 15000);
   form.addEventListener("submit", async event => {
     event.preventDefault();
     const button = form.querySelector('[type="submit"]');
@@ -181,9 +252,32 @@ function initProfilePage() {
 function initDonationDashboard() {
   const rows = document.getElementById("donationRows");
   if (!rows) return;
+  const homeSection = document.getElementById("myDonationsSection");
+  const isHomeDashboard = homeSection?.dataset.homeDashboard === "true";
+  let hasRendered = false;
+  if (!isHomeDashboard) {
+    const target = "index.html#myDonationsSection";
+    window.AyushAPI.get("/auth/me").then(user => {
+      window.location.replace(user.success ? target : `login.html?next=${encodeURIComponent(target)}`);
+    });
+    return;
+  }
   const load = async () => {
-    const user = await requireUser(document.getElementById("dashboardStatus"));
-    if (!user) return;
+    if (window.location.hash !== "#myDonationsSection") {
+      homeSection.hidden = true;
+      return;
+    }
+    const current = await window.AyushAPI.get("/auth/me");
+    if (!current.success || !current.user || window.location.hash !== "#myDonationsSection") {
+      homeSection.hidden = true;
+      return;
+    }
+    const user = current.user;
+    homeSection.hidden = false;
+    document.getElementById("dashboardAvatar").textContent = (user.fullName || "A").trim().charAt(0).toUpperCase();
+    document.getElementById("dashboardUserName").textContent = user.fullName || user.full_name || "Your account";
+    document.getElementById("dashboardUserEmail").textContent = user.email || "";
+    document.getElementById("dashboardUserContact").textContent = [user.phone, user.address].filter(Boolean).join(" · ");
     const [summary, donations] = await Promise.all([
       window.AyushAPI.get("/donations/me/summary"),
       window.AyushAPI.get("/donations/me")
@@ -196,8 +290,19 @@ function initDonationDashboard() {
     renderDonationSummary(summary);
     renderDonationRows(donations.items || []);
     renderMonthlyChart(summary.monthly || []);
+    if (window.location.hash === "#myDonationsSection" && !hasRendered) {
+      hasRendered = true;
+      requestAnimationFrame(() => homeSection.scrollIntoView({ behavior: "smooth", block: "start" }));
+    }
   };
   load();
+  window.addEventListener("hashchange", () => { hasRendered = false; load(); });
+  window.addEventListener("pageshow", event => {
+    if (event.persisted) { hasRendered = false; load(); }
+  });
+  window.setInterval(() => {
+    if (window.location.hash === "#myDonationsSection" && document.visibilityState === "visible") load();
+  }, 15000);
 }
 
 function renderDonationSummary(summary) {
@@ -207,6 +312,9 @@ function renderDonationSummary(summary) {
     : "0";
   document.getElementById("totalCurrencyNote").textContent = totals.length ? "Successful donations by currency" : "No verified donations yet";
   document.getElementById("successfulCount").textContent = String(summary.successfulCount || 0);
+  document.getElementById("totalDonationCount").textContent = String(summary.totalCount || 0);
+  document.getElementById("pendingDonationCount").textContent = String(summary.pendingCount || 0);
+  document.getElementById("rejectedDonationCount").textContent = String(summary.rejectedCount || 0);
   document.getElementById("recentDonation").textContent = summary.mostRecentAmount
     ? `${summary.mostRecentCurrency} ${summary.mostRecentAmount}` : "—";
   document.getElementById("recentDonationDate").textContent = summary.mostRecentAt
@@ -224,27 +332,22 @@ function renderDonationRows(items) {
   empty.hidden = true;
   body.replaceChildren(...items.map(item => {
     const row = document.createElement("tr");
-    const values = [new Date(item.createdAt).toLocaleDateString(), item.projectName || "General", `${item.currency} ${item.amount}`, item.frequency, item.status];
+    const values = [item.id, new Date(item.createdAt || item.created_at).toLocaleDateString(), `INR ${item.amount}`, item.transaction_reference || "—", item.status, item.admin_note || "—"];
     values.forEach((value, index) => {
       const cell = document.createElement("td");
       if (index === 4) {
         const badge = document.createElement("span");
         badge.className = "donation-status";
         badge.dataset.status = item.status;
-        badge.textContent = item.status;
+        badge.textContent = ({
+          PENDING: "Pending admin confirmation",
+          VERIFIED: "Accepted",
+          REJECTED: "Payment not received"
+        })[item.status] || item.status;
         cell.append(badge);
       } else cell.textContent = value;
       row.append(cell);
     });
-    const receipt = document.createElement("td");
-    if (item.status === "SUCCEEDED") {
-      const link = document.createElement("a");
-      link.href = `${window.AyushAPI.baseUrl()}/donations/${encodeURIComponent(item.id)}/receipt`;
-      link.textContent = "Download";
-      link.setAttribute("download", "");
-      receipt.append(link);
-    } else receipt.textContent = "—";
-    row.append(receipt);
     return row;
   }));
 }
@@ -272,49 +375,10 @@ function renderMonthlyChart(points) {
   }));
 }
 
-function initVerificationPage() {
-  const form = document.getElementById("verifyForm");
-  if (!form) return;
-  const params = new URLSearchParams(window.location.search);
-  document.getElementById("verifyToken").value = params.get("token") || "";
-  form.addEventListener("submit", async event => {
-    event.preventDefault();
-    const result = await window.AyushAPI.post("/auth/verify-email", { token: document.getElementById("verifyToken").value.trim() });
-    accountStatus(document.getElementById("verifyStatus"), result.message || (result.success ? "Email verified. You can sign in." : "Verification link is invalid or expired."), result.success ? "success" : "error");
-  });
-  document.getElementById("resendVerification").addEventListener("click", async () => {
-    const email = document.getElementById("resendEmail");
-    if (!email.value.trim()) return accountStatus(document.getElementById("resendStatus"), "Enter the email address used for signup.", "error");
-    const result = await window.AyushAPI.post("/auth/resend-verification", { email: email.value.trim() });
-    accountStatus(document.getElementById("resendStatus"), result.message || "If an eligible account exists, a message will be sent.", result.success ? "success" : "error");
-  });
-}
-
-function initPasswordResetPage() {
-  const forgot = document.getElementById("forgotForm");
-  if (forgot) forgot.addEventListener("submit", async event => {
-    event.preventDefault();
-    const result = await window.AyushAPI.post("/auth/forgot-password", { email: document.getElementById("forgotEmail").value.trim() });
-    accountStatus(document.getElementById("forgotStatus"), result.message || "If that address is eligible, reset instructions will be sent.", "success");
-  });
-  const reset = document.getElementById("resetForm");
-  if (reset) {
-    document.getElementById("resetToken").value = new URLSearchParams(window.location.search).get("token") || "";
-    reset.addEventListener("submit", async event => {
-      event.preventDefault();
-      const password = document.getElementById("resetPassword").value;
-      if (password !== document.getElementById("resetConfirm").value) return accountStatus(document.getElementById("resetStatus"), "The passwords do not match.", "error");
-      const result = await window.AyushAPI.post("/auth/reset-password", { token: document.getElementById("resetToken").value.trim(), password });
-      accountStatus(document.getElementById("resetStatus"), result.message || (result.success ? "Password updated. Sign in with your new password." : "Reset link is invalid or expired."), result.success ? "success" : "error");
-      if (result.success) reset.reset();
-    });
-  }
-}
-
 function initLogoutButtons() {
   document.querySelectorAll("#logoutButton").forEach(button => button.addEventListener("click", async () => {
     const result = await window.AyushAPI.post("/auth/logout", {});
-    if (result.success) window.location.assign("login.html");
+    if (result.success) window.location.replace("index.html");
     else accountStatus(document.getElementById("profileAlert") || document.getElementById("dashboardStatus"), result.message || "Could not sign out.", "error");
   }));
 }

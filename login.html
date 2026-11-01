@@ -1,21 +1,33 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#030407">
   <title>Sign in | Ayush NGO</title><meta name="description" content="Sign in to your Ayush NGO account.">
+  <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/style.css">
+<link rel="canonical" href="https://ayushngo.netlify.app/login">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ayush NGO">
+  <meta property="og:title" content="Sign in | Ayush NGO">
+  <meta property="og:description" content="Sign in to your Ayush NGO account.">
+  <meta property="og:url" content="https://ayushngo.netlify.app/login">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Sign in | Ayush NGO">
+  <meta name="twitter:description" content="Sign in to your Ayush NGO account.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body class="account-page">
-  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">🌱</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span></span></a><a href="signup.html" class="btn btn-outline-white account-header-link">Create account</a></header>
+  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">ðŸŒ±</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">AYUSH NGO WEBSITE</span></span></a><a href="signup.html" class="btn btn-outline-white account-header-link">Create account</a><button type="button" class="theme-toggle-btn">Dark</button></header>
   <main class="account-shell">
     <section class="account-card" aria-labelledby="loginTitle">
-      <a class="account-back-link" href="index.html">← Back to website</a>
+      <a class="account-back-link" href="index.html">â† Back to website</a>
       <p class="account-eyebrow">WELCOME BACK</p><h1 id="loginTitle">Sign in to Ayush NGO</h1>
-      <p class="account-intro">Access your profile and personal donation history.</p>
+      <p class="account-intro">Access your saved account profile and historical records.</p>
       <form id="loginForm" class="account-form" novalidate>
         <label for="loginEmail">Email address</label><input id="loginEmail" name="email" type="email" autocomplete="email" maxlength="254" required>
         <label for="loginPassword">Password</label><div class="password-field"><input id="loginPassword" name="password" type="password" autocomplete="current-password" required><button type="button" class="password-toggle" data-password-toggle="loginPassword" aria-label="Show password">Show</button></div>
-        <div class="account-form-row"><label class="account-checkbox"><input type="checkbox" name="remember"> Keep me signed in</label><a href="reset-password.html">Forgot password?</a></div>
+        <div class="account-form-row"><span>Password reset is unavailable.</span></div>
         <button class="btn btn-primary account-submit" type="submit">Sign in</button>
         <p class="account-status" id="loginStatus" role="status" aria-live="polite"></p>
       </form>
@@ -25,6 +37,8 @@
       <p class="account-demo-note">Use the email address and password you chose when creating your account.</p>
     </section>
   </main>
-  <script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/site-data.js"></script>
+<script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/payment-service.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/theme-ui.js"></script>
 </body>
 </html>

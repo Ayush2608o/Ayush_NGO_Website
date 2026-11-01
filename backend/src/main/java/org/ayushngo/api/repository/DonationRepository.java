@@ -16,6 +16,7 @@ public interface DonationRepository extends JpaRepository<Donation, UUID> {
     interface ProjectTotal { String getProjectName(); String getCurrency(); BigDecimal getTotal(); Long getTransactions(); }
 
     List<Donation> findByUserIdOrderByCreatedAtDesc(UUID userId);
+    Optional<Donation> findByProviderReference(String providerReference);
     Optional<Donation> findByIdAndUserId(UUID id, UUID userId);
     long countByUserIdAndStatus(UUID userId, Donation.Status status);
     Optional<Donation> findFirstByUserIdAndStatusOrderByPaidAtDesc(UUID userId, Donation.Status status);

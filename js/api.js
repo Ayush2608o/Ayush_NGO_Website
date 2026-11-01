@@ -1,10 +1,9 @@
 /**
  * Ayush NGO - API Service Layer
- * Connects frontend HTML/JS with Java Backend (REST API)
- * Includes graceful offline fallback for static HR demo / testing
+ * Connects the static frontend to the Ayush NGO REST API.
+ * Uses verified API responses only; it never invents local fallback records.
  */
 
-const CANDIDATE_PORTS = [8080, 8085, 9090, 8000, 5000];
 const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1", "::1"]);
 const localApiBase = LOCAL_HOSTS.has(window.location.hostname)
   ? `http://${window.location.hostname === "::1" ? "[::1]" : window.location.hostname}:8085/api`
@@ -13,149 +12,67 @@ const localApiBase = LOCAL_HOSTS.has(window.location.hostname)
 const API_CONFIG = {
   BASE_URL: window.AYUSH_API_BASE_URL
     ? `${window.AYUSH_API_BASE_URL.replace(/\/+$/, "")}/api`
-    : (window.location.port === "8085" ? "/api" : (LOCAL_HOSTS.has(window.location.hostname) ? localApiBase : (window.location.port ? "/api" : localApiBase))),
-  REMOTE: Boolean(window.AYUSH_API_BASE_URL),
-  TIMEOUT_MS: 2000
+    : (window.location.port === "8085" ? "/api" : (LOCAL_HOSTS.has(window.location.hostname) ? localApiBase : "")),
+  TIMEOUT_MS: 5000
 };
 
-// Check if Java backend is running (probes active port)
+// Check the configured API only; do not probe unrelated local services.
 async function isBackendOnline() {
-  if (API_CONFIG.REMOTE) {
-    try {
-      const res = await fetch(`${API_CONFIG.BASE_URL}/health`);
-      return res.ok;
-    } catch (_) {
-      return false;
-    }
+  if (!API_CONFIG.BASE_URL) return false;
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), API_CONFIG.TIMEOUT_MS);
+  try {
+    const response = await fetch(`${API_CONFIG.BASE_URL}/health`, {
+      credentials: "include",
+      signal: controller.signal
+    });
+    return response.ok;
+  } catch (error) {
+    console.warn("Configured Ayush NGO API health check failed.", error);
+    return false;
+  } finally {
+    clearTimeout(timer);
   }
-  // If running from same port as server
-  if (window.location.protocol.startsWith("http") && window.location.port) {
-    try {
-      const res = await fetch("/api/health");
-      if (res.ok) {
-        API_CONFIG.BASE_URL = "/api";
-        return true;
-      }
-    } catch (_) {}
-  }
-
-  // Probe localhost candidate ports
-  for (const port of CANDIDATE_PORTS) {
-    try {
-      const controller = new AbortController();
-      const timer = setTimeout(() => controller.abort(), 600);
-      const res = await fetch(`http://localhost:${port}/api/health`, { signal: controller.signal });
-      clearTimeout(timer);
-      if (res.ok) {
-        API_CONFIG.BASE_URL = `http://localhost:${port}/api`;
-        return true;
-      }
-    } catch (_) {
-      // Continue to next port
-    }
-  }
-  return false;
 }
 
-// Fetch NGO Impact Statistics
+// These sections render only data published by the API.
 async function getStatsData() {
+  if (!API_CONFIG.BASE_URL) return { available: false, message: "Verified impact data is not available.", items: [] };
   try {
     const res = await fetch(`${API_CONFIG.BASE_URL}/stats`);
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.info("Using local fallback stats (Java backend offline).");
+    if (!res.ok) return { available: false, message: "Verified impact data is not available.", items: [] };
+    return await res.json();
+  } catch (error) {
+    console.warn("Verified impact data could not be loaded.", error);
+    return { available: false, message: "Verified impact data could not be loaded.", items: [] };
   }
-  return { available: false, message: "Verified impact data has not been configured." };
 }
 
-// Fetch Initiatives & Projects
 async function getProjectsData() {
+  if (!API_CONFIG.BASE_URL) return { success: false, message: "Published projects are not available.", items: [] };
   try {
     const res = await fetch(`${API_CONFIG.BASE_URL}/projects`);
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.info("Using local fallback projects (Java backend offline).");
+    if (!res.ok) return { success: false, message: "Published projects are not available.", items: [] };
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : data.items;
+    return Array.isArray(items) ? { success: true, items } : { success: false, message: "The projects response is invalid.", items: [] };
+  } catch (error) {
+    console.warn("Published projects could not be loaded.", error);
+    return { success: false, message: "Published projects could not be loaded.", items: [] };
   }
-  // Fallback projects matching UI
-  return [
-    {
-      id: "shiksha-2026",
-      title: "Shiksha Mission 2026",
-      category: "Education",
-      description: "Providing digital classrooms, free uniforms, and nutritious midday meals to remote rural schools.",
-      sampleData: true,
-
-      image: "https://images.unsplash.com/photo-1509062522246-3755977927d7?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: "mobile-health-vans",
-      title: "Mobile Health Vans",
-      category: "Healthcare",
-      description: "Equipped medical vans bringing free doctor consultations and medicines to remote villages.",
-      sampleData: true,
-
-      image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      id: "clean-earth-drive",
-      title: "Clean Earth Drive",
-      category: "Environment",
-      description: "Planting native trees, restoring polluted water bodies, and advocating plastic-free urban areas.",
-      sampleData: true,
-
-      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80"
-    }
-  ];
 }
 
-// Fetch Blog & Latest News
 async function getNewsData() {
+  if (!API_CONFIG.BASE_URL) return { success: false, message: "Published news is not available.", items: [] };
   try {
     const res = await fetch(`${API_CONFIG.BASE_URL}/news`);
-    if (res.ok) {
-      return await res.json();
-    }
-  } catch (err) {
-    console.info("Using local fallback news (Java backend offline).");
+    if (!res.ok) return { success: false, message: "Published news is not available.", items: [] };
+    const items = await res.json();
+    return Array.isArray(items) ? { success: true, items } : { success: false, message: "The news response is invalid.", items: [] };
+  } catch (error) {
+    console.warn("Published news could not be loaded.", error);
+    return { success: false, message: "Published news could not be loaded.", items: [] };
   }
-  return [
-    {
-      id: 1,
-      badge: "News 1",
-      meta: "PRESS RELEASE • OCT 2026",
-      title: "Winter Relief Program Update",
-      excerpt: "An illustrative update about community support during winter.",
-      details: "This sample article is placeholder content and should be replaced with a verified update before publication."
-    },
-    {
-      id: 2,
-      image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=800&q=80",
-      meta: "EDUCATION • SEP 2026",
-      title: "New Computer Lab Opened in Rural High School",
-      excerpt: "An illustrative update about expanding access to digital learning.",
-      details: "This sample article is placeholder content and should be replaced with a verified update before publication."
-    },
-    {
-      id: 3,
-      image: "https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=800&q=80",
-      meta: "HEALTHCARE • AUG 2026",
-      title: "Community Vision Care Program",
-      excerpt: "Restoring vision and independence to residents in remote villages through screenings, eyeglasses and referrals.",
-      details: "Mobile ophthalmology teams screened community members during the campaign. People needing further care received eyeglasses or referrals for follow-up treatment, including cataract surgery."
-    },
-    {
-      id: 4,
-      image: "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80",
-      meta: "ENVIRONMENT • JUL 2026",
-      title: "Community Rainwater Harvesting Unit Installed",
-      excerpt: "A new local storage unit helps communities conserve seasonal rainwater for household and agricultural use.",
-      details: "This illustrative update needs verified details before publication. Community volunteers are helping maintain the system and monitor stored water so it can support household needs and small-scale farming through drier months."
-    }
-  ];
 }
 
 async function postApiRequest(path, payload) {
@@ -166,7 +83,14 @@ async function putApiRequest(path, payload) {
   return sendApiRequest(path, "PUT", payload);
 }
 
+async function patchApiRequest(path, payload) {
+  return sendApiRequest(path, "PATCH", payload);
+}
+
 async function sendApiRequest(path, method, payload) {
+  if (!API_CONFIG.BASE_URL) {
+    return { success: false, status: 0, message: "The Ayush NGO API is not configured." };
+  }
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 10000);
   try {
@@ -180,10 +104,11 @@ async function sendApiRequest(path, method, payload) {
     const res = await fetch(`${API_CONFIG.BASE_URL}${path}`, {
       method,
       headers: {
-        "Content-Type": "application/json",
-        "X-XSRF-TOKEN": csrf.token || ""
+        ...(payload instanceof FormData ? {} : { "Content-Type": "application/json" }),
+        "X-XSRF-TOKEN": csrf.token || "",
+        "X-CSRF-Token": csrf.token || ""
       },
-      body: JSON.stringify(payload),
+      body: payload instanceof FormData ? payload : JSON.stringify(payload),
       credentials: "include",
       signal: controller.signal
     });
@@ -193,28 +118,36 @@ async function sendApiRequest(path, method, payload) {
     return { success: false, message: result.message || "The request could not be completed." };
   } catch (err) {
     console.warn(`Backend request failed for ${path}.`, err);
-    return { success: false, message: err.name === "AbortError" ? "The request timed out. Please try again." : "The Java backend is unavailable. Start it and try again." };
+    return { success: false, message: err.name === "AbortError" ? "The request timed out. Please try again." : "The Ayush NGO backend is unavailable. Start the API and try again." };
   } finally {
     clearTimeout(timer);
   }
 }
 
+async function postFormApiRequest(path, formData) {
+  return sendApiRequest(path, "POST", formData);
+}
+
+async function putFormApiRequest(path, formData) {
+  return sendApiRequest(path, "PUT", formData);
+}
+
 async function getApiRequest(path) {
+  if (!API_CONFIG.BASE_URL) {
+    return { success: false, status: 0, message: "The Ayush NGO API is not configured." };
+  }
   try {
     const res = await fetch(`${API_CONFIG.BASE_URL}${path}`, { credentials: "include" });
     const data = await res.json().catch(() => ({}));
     return { success: res.ok, status: res.status, ...data };
-  } catch (_) {
+  } catch (error) {
+    console.warn(`Backend request failed for ${path}.`, error);
     return { success: false, status: 0, message: "The Ayush NGO service is unavailable." };
   }
 }
 
 function submitContactMessage(contactData) {
   return postApiRequest("/contact", contactData);
-}
-
-function processDonation(donationData) {
-  return postApiRequest("/donate", donationData);
 }
 
 function submitVolunteerApplication(applicationData) {
@@ -225,19 +158,51 @@ function submitNewsletterSubscription(subscriptionData) {
   return postApiRequest("/newsletter", subscriptionData);
 }
 
+async function submitNetlifyForm(form) {
+  const configuredHost = window.AYUSH_SITE_DATA?.brand?.productionUrl
+    ? new URL(window.AYUSH_SITE_DATA.brand.productionUrl).hostname
+    : "";
+  const hostname = window.location.hostname.toLowerCase();
+  const isNetlifyHost = Boolean(configuredHost) &&
+    (hostname === configuredHost.toLowerCase() || hostname.endsWith(".netlify.app"));
+  const formName = form.getAttribute("name");
+  if (!isNetlifyHost || !formName || form.dataset.netlify !== "true") {
+    return { success: false, skipped: true, message: "Netlify Forms is not available on this host." };
+  }
+
+  const formData = new FormData(form);
+  formData.set("form-name", formName);
+  try {
+    const response = await fetch(window.location.pathname, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(formData).toString()
+    });
+    return response.ok
+      ? { success: true, message: "Your submission has been received." }
+      : { success: false, message: "The form service could not accept this submission." };
+  } catch (_) {
+    return { success: false, message: "The form service is unavailable. Please try again later." };
+  }
+}
+
 // Expose API module
 window.AyushAPI = {
+  isConfigured: () => Boolean(API_CONFIG.BASE_URL),
   isBackendOnline,
   getBackendPort: () => new URL(API_CONFIG.BASE_URL, window.location.href).port,
   baseUrl: () => API_CONFIG.BASE_URL,
   get: getApiRequest,
   post: postApiRequest,
+  postForm: postFormApiRequest,
   put: putApiRequest,
+  patch: patchApiRequest,
+  putForm: putFormApiRequest,
   getStatsData,
   getProjectsData,
   getNewsData,
   submitContactMessage,
-  processDonation,
   submitVolunteerApplication,
-  submitNewsletterSubscription
+  submitNewsletterSubscription,
+  submitNetlifyForm
 };

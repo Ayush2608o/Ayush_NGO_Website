@@ -1,23 +1,45 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>My donations | Ayush NGO</title><meta name="description" content="View your personal Ayush NGO donation history and request statuses.">
+  <meta name="theme-color" content="#030407">
+  <title>My donations | Ayush NGO</title><meta name="description" content="View historical donation records associated with your account.">
+  <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/style.css">
+<link rel="canonical" href="https://ayushngo.netlify.app/dashboard">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ayush NGO">
+  <meta property="og:title" content="My donations | Ayush NGO">
+  <meta property="og:description" content="View historical donation records associated with your account.">
+  <meta property="og:url" content="https://ayushngo.netlify.app/dashboard">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="My donations | Ayush NGO">
+  <meta name="twitter:description" content="View historical donation records associated with your account.">
+<meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body class="account-page">
-  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">🌱</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span></span></a><nav class="account-header-nav"><a href="profile.html">My profile</a><button type="button" id="logoutButton" class="account-text-button">Sign out</button></nav></header>
+  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">ðŸŒ±</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">AYUSH NGO WEBSITE</span></span></a><nav class="account-header-nav" aria-label="Website navigation"><a href="index.html">Home</a><a href="about.html">About Us</a><a href="work.html">Our Work</a><a href="gallery.html">Gallery</a><a href="profile.html">My profile</a><button type="button" id="logoutButton" class="account-text-button">Sign out</button></nav><button type="button" class="theme-toggle-btn">Dark</button></header>
   <main class="account-shell account-shell-wide">
-    <div class="dashboard-heading"><div><p class="account-eyebrow">PERSONAL DASHBOARD</p><h1>My donations</h1><p class="account-intro">This view shows donations attached to your account only.</p></div><a href="index.html" class="btn btn-primary">Make a request</a></div>
+    <div class="dashboard-heading"><div><p class="account-eyebrow">PERSONAL DASHBOARD</p><h1>My donation history</h1><p class="account-intro">Only historical donation records attached to your account are shown. New donations are unavailable.</p></div></div>
     <div class="account-status" id="dashboardStatus" role="status" aria-live="polite"></div>
+    <section class="account-card account-dashboard-profile" aria-label="Your account details">
+      <div class="profile-heading"><div class="profile-avatar" id="dashboardAvatar" aria-hidden="true">A</div><div><p class="account-eyebrow">SIGNED IN AS</p><h2 id="dashboardUserName">Loading your accountâ€¦</h2><p id="dashboardUserEmail" class="account-intro"></p><p id="dashboardUserContact" class="account-hint"></p></div></div>
+      <a href="profile.html" class="btn btn-secondary">Manage profile</a>
+    </section>
     <section class="donation-summary-grid" aria-label="Your successful donation summary">
-      <article class="donation-summary-card"><span>Successful total</span><strong id="personalTotal">—</strong><small id="totalCurrencyNote">Verified transactions only</small></article>
-      <article class="donation-summary-card"><span>Successful donations</span><strong id="successfulCount">—</strong><small>Pending and failed requests excluded</small></article>
-      <article class="donation-summary-card"><span>Most recent</span><strong id="recentDonation">—</strong><small id="recentDonationDate">Verified donation date</small></article>
+      <article class="donation-summary-card"><span>Successful total</span><strong id="personalTotal">â€”</strong><small id="totalCurrencyNote">Verified transactions only</small></article>
+      <article class="donation-summary-card"><span>Verified donations</span><strong id="successfulCount">â€”</strong><small>Manually verified only</small></article>
+      <article class="donation-summary-card"><span>All submissions</span><strong id="totalDonationCount">0</strong><small>Donation records</small></article>
+      <article class="donation-summary-card"><span>Pending</span><strong id="pendingDonationCount">0</strong><small>Awaiting manual review</small></article>
+      <article class="donation-summary-card"><span>Rejected</span><strong id="rejectedDonationCount">0</strong><small>Not included in totals</small></article>
+      <article class="donation-summary-card"><span>Most recent</span><strong id="recentDonation">â€”</strong><small id="recentDonationDate">Verified donation date</small></article>
     </section>
     <section class="account-card donation-chart-card"><h2>Monthly giving</h2><p class="account-hint">Successful donations grouped by currency. Pending requests are not counted.</p><div id="monthlyDonationChart" class="monthly-chart" role="img" aria-label="Monthly successful donation amounts"></div></section>
-    <section class="account-card donation-history-card"><div class="dashboard-heading"><div><h2>Donation history</h2><p class="account-hint">Payment is confirmed only after provider verification.</p></div></div><div class="account-table-wrap"><table class="donation-table"><thead><tr><th>Date</th><th>Project</th><th>Amount</th><th>Frequency</th><th>Status</th><th>Receipt</th></tr></thead><tbody id="donationRows"><tr><td colspan="6">Loading your donation history…</td></tr></tbody></table></div><div class="account-empty" id="donationEmpty" hidden>You don’t have any donation requests yet. Your history will appear here.</div></section>
+    <section class="account-card donation-history-card"><div class="dashboard-heading"><div><h2>Donation history</h2><p class="account-hint">Pending amounts do not count toward the verified total.</p></div></div><div class="account-table-wrap"><table class="donation-table"><thead><tr><th>Donation ID</th><th>Date</th><th>Amount</th><th>UTR / reference</th><th>Status</th><th>Admin note</th></tr></thead><tbody id="donationRows"><tr><td colspan="6">Loading your donation history…</td></tr></tbody></table></div><div class="account-empty" id="donationEmpty" hidden>No donation records are linked to your account.</div></section>
   </main>
-  <script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/site-data.js"></script>
+<script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/payment-service.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/theme-ui.js"></script>
 </body>
 </html>

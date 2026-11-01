@@ -1,4 +1,4 @@
-# Runtime submissions and local files must never be published.
+﻿# Runtime submissions and local files must never be published.
 /data/
 /bin/
 /dist/
@@ -9,3 +9,6 @@
 .env.*
 !.env.example
 
+*.db
+*.db-shm
+*.db-wal

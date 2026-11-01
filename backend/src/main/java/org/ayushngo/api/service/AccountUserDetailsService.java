@@ -20,6 +20,6 @@ public class AccountUserDetailsService implements UserDetailsService {
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid credentials"));
         String storedPassword = account.getPasswordHash() == null ? "{bcrypt}$2a$10$invalid.invalid.invalid.invalid.invalid.invalid.invalid" : account.getPasswordHash();
         return User.withUsername(account.getEmail()).password(storedPassword)
-                .roles(account.getRole().name()).disabled(!account.isEmailVerified()).build();
+                .roles(account.getRole().name()).build();
     }
 }

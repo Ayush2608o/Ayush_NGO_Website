@@ -2,6 +2,58 @@
   command = "node scripts/build-site.js"
   publish = "dist"
 
+[[redirects]]
+  from = "/donate"
+  to = "/donate.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/admin.html"
+  status = 200
+
+[[redirects]]
+  from = "/about"
+  to = "/about.html"
+  status = 200
+
+[[redirects]]
+  from = "/work"
+  to = "/work.html"
+  status = 200
+
+[[redirects]]
+  from = "/volunteer"
+  to = "/volunteer.html"
+  status = 200
+
+[[redirects]]
+  from = "/gallery"
+  to = "/gallery.html"
+  status = 200
+
+[[redirects]]
+  from = "/blog"
+  to = "/blog.html"
+  status = 200
+
+[[redirects]]
+  from = "/contact"
+  to = "/contact.html"
+  status = 200
+
+[[redirects]]
+  from = "/showcase"
+  to = "/showcase.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "DENY"
+
 [[headers]]
   for = "/*.html"
   [headers.values]

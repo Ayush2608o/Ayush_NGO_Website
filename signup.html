@@ -1,17 +1,30 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Create account | Ayush NGO</title><meta name="description" content="Create an Ayush NGO account to manage your profile and donation requests.">
+  <meta name="theme-color" content="#030407">
+  <title>Create account | Ayush NGO</title><meta name="description" content="Create an Ayush NGO account to manage your profile details.">
+  <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/style.css">
+<link rel="canonical" href="https://ayushngo.netlify.app/signup">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ayush NGO">
+  <meta property="og:title" content="Create account | Ayush NGO">
+  <meta property="og:description" content="Create an Ayush NGO account to manage your profile details.">
+  <meta property="og:url" content="https://ayushngo.netlify.app/signup">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Create account | Ayush NGO">
+  <meta name="twitter:description" content="Create an Ayush NGO account to manage your profile details.">
+<meta name="robots" content="noindex, nofollow">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body class="account-page">
-  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">🌱</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span></span></a><a href="login.html" class="btn btn-outline-white account-header-link">Sign in</a></header>
+  <header class="account-header"><a class="brand-logo" href="index.html"><span class="brand-icon-wrapper">ðŸŒ±</span><span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">AYUSH NGO WEBSITE</span></span></a><a href="login.html" class="btn btn-outline-white account-header-link">Sign in</a><button type="button" class="theme-toggle-btn">Dark</button></header>
   <main class="account-shell">
     <section class="account-card account-card-wide" aria-labelledby="signupTitle">
-      <a class="account-back-link" href="index.html">← Back to website</a>
+      <a class="account-back-link" href="index.html">â† Back to website</a>
       <p class="account-eyebrow">JOIN OUR COMMUNITY</p><h1 id="signupTitle">Create your account</h1>
-      <p class="account-intro">Your profile keeps your personal details and donation history together.</p>
+      <p class="account-intro">Create an account to save and manage your profile details.</p>
       <form id="signupForm" class="account-form" novalidate>
         <label for="signupName">Full name</label><input id="signupName" name="fullName" type="text" autocomplete="name" maxlength="120" required>
         <label for="signupEmail">Email address</label><input id="signupEmail" name="email" type="email" autocomplete="email" maxlength="254" required>
@@ -29,6 +42,8 @@
       <p class="account-demo-note">Create an account with your email and password, then sign in any time.</p>
     </section>
   </main>
-  <script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/site-data.js"></script>
+<script src="js/deploy-config.js"></script><script src="js/api.js"></script><script src="js/payment-service.js"></script><script src="js/auth-ui.js"></script>
+  <script src="js/theme-ui.js"></script>
 </body>
 </html>

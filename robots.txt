@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /signup
+Disallow: /profile
+Disallow: /dashboard
+Disallow: /reset-password
+Disallow: /verify-email
+Disallow: /privacy
+Disallow: /terms
+Disallow: /thank-you
+
+Sitemap: https://ayushngo.netlify.app/sitemap.xml

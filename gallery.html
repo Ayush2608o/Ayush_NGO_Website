@@ -1,64 +1,52 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#030407">
   <title>Photo & Event Gallery | Ayush NGO</title>
-  <meta name="description" content="Photo & Event Gallery - Glimpses of smile, hope, and social work on the ground by Ayush NGO.">
+  <meta name="description" content="Explore an illustrative photo gallery inspired by community, learning, wellbeing, and nature.">
+  <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/style.css">
+<link rel="canonical" href="https://ayushngo.netlify.app/gallery">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ayush NGO">
+  <meta property="og:title" content="Photo &amp; Event Gallery | Ayush NGO">
+  <meta property="og:description" content="Explore an illustrative photo gallery inspired by community, learning, wellbeing, and nature.">
+  <meta property="og:url" content="https://ayushngo.netlify.app/gallery">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Photo &amp; Event Gallery | Ayush NGO">
+  <meta name="twitter:description" content="Explore an illustrative photo gallery inspired by community, learning, wellbeing, and nature.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
-<body>
+<body class="gallery-page">
 
   <!-- Scroll Progress Indicator -->
   <div class="scroll-progress-bar"></div>
 
   <!-- Top Announcement Bar -->
-  <div class="demo-notice" role="note">Demo website: sample stories and project descriptions are illustrative. Confirm organizational details before publication.</div>
-  <div class="top-announcement-bar">
-    <div class="container top-bar-content">
-      <div class="announcement-left">
-        <span class="urgent-badge">URGENT</span>
-        <span class="announcement-text">Explore our illustrative community programs.</span>
-      </div>
-      <div class="announcement-right">
-        <a href="contact.html" class="announcement-link">🤝 Volunteer With Us</a>
-        <span class="announcement-link">Phone contact not configured</span>
-      </div>
-    </div>
-  </div>
+  <div class="top-announcement-bar"><div class="container top-bar-content"><span>Care grows when we grow it together.</span><a href="contact.html" class="announcement-link">Say hello <span aria-hidden="true">â†—</span></a></div></div>
 
   <!-- Header -->
   <header class="site-header">
     <div class="container navbar-inner">
       <a href="index.html" class="brand-logo" aria-label="Ayush NGO Home">
-        <div class="brand-icon-wrapper">🌱</div>
+        <div class="brand-icon-wrapper" aria-hidden="true">A</div>
         <div class="brand-text-group">
           <span class="brand-name">Ayush NGO</span>
-          <span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span>
+          <span class="brand-tagline">AYUSH NGO WEBSITE</span>
         </div>
       </a>
 
-      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">☰</button>
+      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">â˜°</button>
 
       <nav>
         <ul class="nav-menu" id="navMenu">
-          <li><a href="showcase.html" class="nav-showcase-link"><span>田</span><span>All Pages Showcase</span></a></li>
-          <li><a href="index.html" class="nav-link">Home</a></li>
-          <li><a href="about.html" class="nav-link">About Us</a></li>
-          <li><a href="work.html" class="nav-link">Our Work</a></li>
-          <li><a href="gallery.html" class="nav-link active">Gallery</a></li>
-          <li><a href="blog.html" class="nav-link">Blog & News</a></li>
-          <li><a href="contact.html" class="nav-link">Contact Us</a></li>
+          <li><a href="index.html" class="nav-link">Home</a></li><li><a href="about.html" class="nav-link">About</a></li><li><a href="work.html" class="nav-link">Our work</a></li><li><a href="volunteer.html" class="nav-link">Volunteer</a></li><li><a href="gallery.html" class="nav-link active" aria-current="page">Gallery</a></li><li><a href="blog.html" class="nav-link">Journal</a></li><li><a href="contact.html" class="nav-link">Contact</a></li>
         </ul>
       </nav>
 
-      <div class="header-actions">
-        <button type="button" class="currency-toggle-btn" aria-label="Switch currency">💵 USD ($)</button>
-        <button type="button" class="theme-toggle-btn" aria-label="Toggle dark mode">🌙 Dark</button>
-        <button class="btn-donate-nav" data-action="donate" data-amount="50">
-          <span>❤</span><span>Donate Now</span>
-        </button>
-      </div>
+      <div class="header-actions"><a class="btn-donate-nav" href="donate.html"><span>Donate now</span></a><button type="button" class="theme-toggle-btn">Dark</button></div>
     </div>
   </header>
 
@@ -66,94 +54,30 @@
   <main>
     <section class="gallery-section">
       <div class="container">
-        <div class="section-header">
-          <h1 class="section-title">Photo & Event Gallery</h1>
-          <p class="section-subtitle">Glimpses of smile, hope, and social work on the ground.</p>
+        <div class="gallery-intro">
+          <div class="gallery-intro-copy">
+            <span class="gallery-eyebrow"><span></span> A visual journal</span>
+            <h1>Moments that<br><em>move us forward.</em></h1>
+            <p>Explore the ideas and everyday moments at the heart of stronger, more caring communities.</p>
+          </div>
+          <div class="gallery-hero-art"><img src="https://images.unsplash.com/photo-1529390079861-591de354faf5?auto=format&amp;fit=crop&amp;w=1000&amp;q=85" alt="Children sharing a joyful moment outdoors"><div class="gallery-count-card"><span class="gallery-count-icon" aria-hidden="true">âœ³</span><strong id="galleryCount">08</strong><span>moments<br>to explore</span></div><span class="gallery-art-caption">A brighter future starts together</span></div>
         </div>
 
-        <!-- Filter Tabs -->
-        <div class="gallery-filter-tabs">
-          <button type="button" class="filter-tab active" data-filter="all">All Photos</button>
-          <button type="button" class="filter-tab" data-filter="education">Education</button>
-          <button type="button" class="filter-tab" data-filter="healthcare">Healthcare</button>
-          <button type="button" class="filter-tab" data-filter="environment">Environment</button>
-          <button type="button" class="filter-tab" data-filter="community">Community Relief</button>
+        <div class="gallery-demo-note" role="note"><span aria-hidden="true">â“˜</span><p><strong>Illustrative gallery</strong> â€” these stock photographs are visual examples, not documentation of Ayush NGO programs or events.</p></div>
+
+        <div class="gallery-controls">
+          <div class="gallery-filter-tabs" role="group" aria-label="Filter gallery themes">
+            <button type="button" class="filter-tab active" data-filter="all" aria-pressed="true">All themes</button>
+            <button type="button" class="filter-tab" data-filter="education" aria-pressed="false">Learning</button>
+            <button type="button" class="filter-tab" data-filter="healthcare" aria-pressed="false">Wellbeing</button>
+            <button type="button" class="filter-tab" data-filter="environment" aria-pressed="false">Environment</button>
+            <button type="button" class="filter-tab" data-filter="community" aria-pressed="false">Community</button>
+          </div>
+          <span class="gallery-results" id="galleryResults" aria-live="polite">Showing 8 stories</span>
         </div>
 
-        <!-- Gallery Grid -->
-        <div class="gallery-grid">
-          <!-- Item 1: Smiling children -->
-          <div class="gallery-item" data-category="education">
-            <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=600&q=80" alt="Primary School Book Distribution">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Primary School Book Distribution</p>
-            </div>
-          </div>
-
-          <!-- Item 2: Community meals program -->
-          <div class="gallery-item" data-category="community">
-            <img src="https://images.pexels.com/photos/35247605/pexels-photo-35247605.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=900" alt="Children sharing a meal at a community center" loading="lazy" decoding="async">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Community Meals Program</p>
-            </div>
-          </div>
-
-          <!-- Item 3: Classroom session -->
-          <div class="gallery-item" data-category="education">
-            <img src="https://images.unsplash.com/photo-1577896851231-70ef18881754?auto=format&fit=crop&w=600&q=80" alt="Digital Classroom Interactive Session">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Digital Classroom Session</p>
-            </div>
-          </div>
-
-          <!-- Item 4: Doctor checkup -->
-          <div class="gallery-item" data-category="healthcare">
-            <img src="https://images.unsplash.com/photo-1584515979956-d9f6e5d09982?auto=format&fit=crop&w=600&q=80" alt="Free Medical & Health Camp">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Free Medical & Health Camp</p>
-            </div>
-          </div>
-
-          <!-- Item 5: Tree plantation -->
-          <div class="gallery-item" data-category="environment">
-            <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=600&q=80" alt="Community Tree Planting">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Community Tree Planting</p>
-            </div>
-          </div>
-
-          <!-- Item 6: Women empowerment -->
-          <div class="gallery-item" data-category="community">
-            <img src="https://images.unsplash.com/photo-1531206715517-5c0ba140b2b8?auto=format&fit=crop&w=600&q=80" alt="Vocational Skills Training Program">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Vocational Skills Program</p>
-            </div>
-          </div>
-
-          <!-- Item 7: Clean drinking water -->
-          <div class="gallery-item" data-category="environment">
-            <img src="https://images.pexels.com/photos/35392371/pexels-photo-35392371.jpeg?auto=compress&amp;cs=tinysrgb&amp;w=900" alt="Rural hand pump providing access to clean water" loading="lazy" decoding="async">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Clean Water Hand Pump</p>
-            </div>
-          </div>
-
-          <!-- Item 8: Relief distribution -->
-          <div class="gallery-item" data-category="community">
-            <img src="https://images.unsplash.com/photo-1469571486292-0ba58a3f068b?auto=format&fit=crop&w=600&q=80" alt="Winter Relief Package Distribution">
-            <div class="gallery-item-overlay">
-              <span>🔍</span>
-              <p>Winter Relief Package</p>
-            </div>
-          </div>
-        </div>
+        <div class="gallery-grid" id="galleryGrid"></div>
+                <div class="gallery-bottom-cta"><span>Have photos from a verified Ayush NGO activity?</span><a href="contact.html" class="gallery-contact-link">Share them with us <span aria-hidden="true">â†—</span></a></div>
       </div>
     </section>
   </main>
@@ -161,117 +85,42 @@
   <!-- Donation Modal -->
   <div class="modal-overlay" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle">
     <div class="modal-card">
-      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">✕</button>
+      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">âœ•</button>
 
       <div class="modal-header">
-        <div class="modal-heart-icon">💚</div>
-        <h3 class="modal-title" id="donationModalTitle">Make A Donation</h3>
-        <p class="modal-subtitle">Your contribution brings education, healthcare & food to those in need.</p>
+        <div class="modal-heart-icon">ðŸ’š</div>
+        <h3 class="modal-title" id="donationModalTitle">Manual UPI donations</h3>
+        <p class="modal-subtitle">The manual UPI contribution page is available when an administrator configures the receiving account and genuine QR image. Submitted payments remain pending until verified.</p>
       </div>
 
       <div class="modal-body">
-        <div class="donation-freq-toggle">
-          <button type="button" class="freq-btn active" data-freq="one-time">One-Time Gift</button>
-          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support</button>
-        </div>
-
-        <label class="amount-label">SELECT AMOUNT ($)</label>
-        <div class="preset-amounts-row">
-          <button type="button" class="preset-btn" data-amount="25">$25</button>
-          <button type="button" class="preset-btn selected" data-amount="50">$50</button>
-          <button type="button" class="preset-btn" data-amount="100">$100</button>
-        </div>
-
-        <div class="impact-explainer-badge" id="impactExplainerBadge">
-          🌱 Provides complete winter warm clothing & health checkup for 3 children.
-        </div>
-
-        <div class="custom-amount-group form-group">
-          <label class="amount-label" for="customAmountInput">CUSTOM AMOUNT</label>
-          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" max="1000000" step="5">
-        </div>
-
-
-        <p class="form-help">Payment processing is not configured. This form records a pending request only.</p>
-
-        <div class="form-group">
-          <label class="amount-label" for="donorNameInput">YOUR FULL NAME</label>
-          <input type="text" id="donorNameInput" class="form-control" placeholder="Your name" maxlength="120" required>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 22px;">
-          <label class="amount-label" for="donorEmailInput">EMAIL ADDRESS</label>
-          <input type="email" id="donorEmailInput" class="form-control" placeholder="you@example.org" maxlength="254" required>
-        </div>
-
-        <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Submit Donation Request</button>
+        <p class="form-help">Manual UPI contributions require administrator configuration and remain pending until verified.</p>
+        <a class="btn btn-primary" href="contact.html">Contact us</a>
       </div>
     </div>
   </div>
 
   <!-- Footer -->
   <!-- Multi-Column Enterprise Footer -->
-  <footer class="site-footer">
-    <div class="container">
-      <div class="footer-top-grid">
-        <div>
-          <div class="brand-logo" style="margin-bottom: 14px;">
-            <div class="brand-icon-wrapper">🌱</div>
-            <div class="brand-text-group">
-              <span class="brand-name" style="color:#fff;">Ayush NGO</span>
-              <span class="brand-tagline" style="color:#a7f3d0;">EMPOWERING LIVES, RESTORING HOPE</span>
-            </div>
-          </div>
-          <p class="footer-desc">
-            Ayush NGO is the brand used for this website demo. Official organization, program, and contact details must be verified before publication.
-          </p>
-        </div>
-        <div>
-          <h4 class="footer-col-title">Explore Pages</h4>
-          <ul class="footer-links-list">
-            <li><a href="index.html">🏠 Home Page</a></li>
-            <li><a href="about.html">👤 About Our Mission</a></li>
-            <li><a href="work.html">💼 Key Initiatives &amp; Projects</a></li>
-            <li><a href="gallery.html">🖼️ Photo &amp; Event Gallery</a></li>
-            <li><a href="blog.html">📰 Latest News &amp; Articles</a></li>
-            <li><a href="contact.html">✉️ Contact &amp; Headquarters</a></li>
-            <li><a href="showcase.html">田 All Pages Showcase</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="footer-col-title">Active Causes</h4>
-          <ul class="footer-links-list">
-            <li><a href="work.html">Shiksha Mission 2026</a></li>
-            <li><a href="work.html">Mobile Health Vans</a></li>
-            <li><a href="work.html">Clean Earth Drive</a></li>
-            <li><a href="work.html">Winter Relief Drive</a></li>
-            <li><a href="work.html">Women Vocational Cells</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4 class="footer-col-title">Stay Connected</h4>
-          <p class="footer-desc">Subscribe to receive project and website updates.</p>
-          <form class="newsletter-form">
-            <input type="email" class="newsletter-input" placeholder="Enter your email" required>
-            <button type="submit" class="newsletter-btn">Join</button>
-          </form>
-          <div id="backendStatusIndicator" style="font-size:0.8rem; color:#94a3b8; margin-top: 18px;"></div>
-        </div>
-      </div>
-
-      <div class="footer-bottom-bar">
-        <div class="footer-copyright">
-          © <span id="currentYear">2026</span> Ayush NGO. Website demonstration.
-        </div>
-      </div>
+  <footer class="site-footer gallery-footer">
+  <div class="container">
+    <div class="gallery-footer-main">
+      <a href="index.html" class="brand-logo" aria-label="Ayush NGO home">
+        <span class="brand-icon-wrapper" aria-hidden="true">A</span>
+        <span class="brand-text-group"><span class="brand-name">Ayush NGO</span><span class="brand-tagline">CARE THAT MOVES US FORWARD</span></span>
+      </a>
+      <p>Small acts. Lasting change.<br>Let us grow something good together.</p>
+      <a class="gallery-header-cta" href="contact.html">Say hello <span aria-hidden="true">â†—</span></a>
     </div>
-  </footer>
+    <div class="gallery-footer-bottom"><span>Â© <span id="currentYear">2026</span> Ayush NGO</span><span>People first, always.</span></div>
+  </div>
+</footer>
 
-  <script src="js/deploy-config.js"></script>
-  <script src="js/api.js"></script>
+  <script src="js/site-data.js"></script>
+<script src="js/deploy-config.js"></script>
+  <script src="js/api.js"></script><script src="js/payment-service.js"></script>
   <script src="js/main.js"></script>
   <script src="js/auth-ui.js"></script>
+  <script src="js/theme-ui.js"></script>
 </body>
 </html>

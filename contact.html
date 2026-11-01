@@ -1,11 +1,23 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#030407">
   <title>Contact Us | Ayush NGO</title>
-  <meta name="description" content="Get in touch with Ayush NGO headquarters in New Delhi. Inquiries for volunteering, partnerships, and donations.">
+  <meta name="description" content="Contact Ayush NGO through the website message form.">
+  <script src="js/theme-init.js"></script>
   <link rel="stylesheet" href="css/style.css">
+<link rel="canonical" href="https://ayushngo.netlify.app/contact">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Ayush NGO">
+  <meta property="og:title" content="Contact Us | Ayush NGO">
+  <meta property="og:description" content="Contact Ayush NGO through the website message form.">
+  <meta property="og:url" content="https://ayushngo.netlify.app/contact">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="Contact Us | Ayush NGO">
+  <meta name="twitter:description" content="Contact Ayush NGO through the website message form.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 </head>
 <body>
 
@@ -13,16 +25,14 @@
   <div class="scroll-progress-bar"></div>
 
   <!-- Top Announcement Bar -->
-  <div class="demo-notice" role="note">Demo website: sample stories and project descriptions are illustrative. Confirm organizational details before publication.</div>
   <div class="top-announcement-bar">
     <div class="container top-bar-content">
       <div class="announcement-left">
-        <span class="urgent-badge">URGENT</span>
-        <span class="announcement-text">Explore our illustrative community programs.</span>
+        <span class="announcement-text">Organization details and program information are being verified.</span>
       </div>
       <div class="announcement-right">
-        <a href="#" class="announcement-link" data-action="volunteer">🤝 Volunteer With Us</a>
-        <span class="announcement-link">Phone contact not configured</span>
+        <a href="contact.html" class="announcement-link">Contact form</a>
+        <span class="announcement-link">Official phone contact is not configured</span>
       </div>
     </div>
   </div>
@@ -31,34 +41,27 @@
   <header class="site-header">
     <div class="container navbar-inner">
       <a href="index.html" class="brand-logo" aria-label="Ayush NGO Home">
-        <div class="brand-icon-wrapper">🌱</div>
+        <div class="brand-icon-wrapper">ðŸŒ±</div>
         <div class="brand-text-group">
           <span class="brand-name">Ayush NGO</span>
-          <span class="brand-tagline">EMPOWERING LIVES, RESTORING HOPE</span>
+          <span class="brand-tagline">AYUSH NGO WEBSITE</span>
         </div>
       </a>
 
-      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">☰</button>
+      <button class="mobile-nav-toggle" id="mobileToggle" aria-label="Toggle navigation menu" aria-expanded="false" aria-controls="navMenu">â˜°</button>
 
       <nav>
         <ul class="nav-menu" id="navMenu">
-          <li><a href="showcase.html" class="nav-showcase-link"><span>田</span><span>All Pages Showcase</span></a></li>
           <li><a href="index.html" class="nav-link">Home</a></li>
           <li><a href="about.html" class="nav-link">About Us</a></li>
-          <li><a href="work.html" class="nav-link">Our Work</a></li>
+          <li><a href="work.html" class="nav-link">Our Work</a></li><li><a href="volunteer.html" class="nav-link">Volunteer</a></li>
           <li><a href="gallery.html" class="nav-link">Gallery</a></li>
           <li><a href="blog.html" class="nav-link">Blog & News</a></li>
           <li><a href="contact.html" class="nav-link active">Contact Us</a></li>
         </ul>
       </nav>
 
-      <div class="header-actions">
-        <button type="button" class="currency-toggle-btn" aria-label="Switch currency">💵 USD ($)</button>
-        <button type="button" class="theme-toggle-btn" aria-label="Toggle dark mode">🌙 Dark</button>
-        <button class="btn-donate-nav" data-action="donate" data-amount="50">
-          <span>❤</span><span>Donate Now</span>
-        </button>
-      </div>
+      <div class="header-actions"><a class="btn-donate-nav" href="donate.html"><span>Donate now</span></a><button type="button" class="theme-toggle-btn">Dark</button></div>
     </div>
   </header>
 
@@ -67,77 +70,85 @@
     <section class="contact-section">
       <div class="container">
         <div class="section-header">
-          <span class="pill-badge pill-badge-cyan" style="margin-bottom: 12px;">We're Here For You</span>
-          <h1 class="section-title">Get In Touch With Us</h1>
-          <p class="section-subtitle">Have questions or want to partner with Ayush NGO? Send us a message.</p>
+          <span class="pill-badge pill-badge-cyan" style="margin-bottom: 12px;">Contact</span>
+          <h1 class="section-title">Send us a message</h1>
+          <p class="section-subtitle">Phone, public email, office address, and opening hours have not been verified for publication.</p>
         </div>
 
         <div class="contact-layout-grid">
           <!-- Left: Send A Message Form -->
           <div class="contact-form-card">
             <h2 class="form-box-title">Send A Message</h2>
-            <form id="contactForm" novalidate>
+            <form id="contactForm" name="contact" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/thank-you.html" novalidate>
+              <input type="hidden" name="form-name" value="contact">
+              <div class="form-honeypot" aria-hidden="true"><label for="contactBotField">Leave this field blank</label><input id="contactBotField" name="bot-field" type="text" tabindex="-1" autocomplete="off"></div>
               <div class="form-group">
                 <label class="form-label" for="contactName">YOUR NAME</label>
-                <input type="text" id="contactName" class="form-control" placeholder="Your name" maxlength="120" required>
+                <input type="text" id="contactName" name="name" class="form-control" placeholder="Your name" maxlength="120" autocomplete="name" required>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="contactEmail">EMAIL ADDRESS</label>
-                <input type="email" id="contactEmail" class="form-control" placeholder="you@example.org" maxlength="254" required>
+                <input type="email" id="contactEmail" name="email" class="form-control" placeholder="you@example.org" maxlength="254" autocomplete="email" required>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="contactPhone">PHONE <span class="account-optional">OPTIONAL</span></label>
+                <input type="tel" id="contactPhone" name="phone" class="form-control" placeholder="Your phone number" maxlength="40" autocomplete="tel">
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="contactSubject">SUBJECT</label>
-                <input type="text" id="contactSubject" class="form-control" placeholder="How can we help?" maxlength="200" required>
+                <input type="text" id="contactSubject" name="subject" class="form-control" placeholder="How can we help?" maxlength="200" required>
               </div>
 
               <div class="form-group">
                 <label class="form-label" for="contactMessage">MESSAGE</label>
-                <textarea id="contactMessage" class="form-control" placeholder="Write your message here..." rows="5" maxlength="4000" required></textarea>
+                <textarea id="contactMessage" name="message" class="form-control" placeholder="Write your message here..." rows="5" maxlength="4000" required></textarea>
               </div>
 
               <button type="submit" class="btn-send-message">
                 <span>Send Message</span>
-                <span>✈</span>
+                <span>âœˆ</span>
               </button>
+              <p id="contactStatus" class="form-status" role="status" aria-live="polite"></p>
             </form>
           </div>
 
-          <!-- Right: Contact Details & Real Interactive Map View -->
           <div class="contact-info-column">
-            <!-- Dark Navy HQ Box -->
             <div class="hq-contact-card">
-              <h3 class="hq-card-title">Contact Details</h3>
+              <h3 class="hq-card-title">Contact information</h3>
+              <p class="form-help">Contact information will be updated soon.</p>
               <ul class="hq-details-list">
                 <li class="hq-detail-item">
-                  <span class="hq-icon">📍</span>
-                  <span>Jabalpur, Madhya Pradesh, India</span>
+                  <span class="hq-icon">ðŸ“</span>
+                  <span>Jabalpur, Madhya Pradesh. The office street address has not been verified.</span>
                 </li>
                 <li class="hq-detail-item">
-                  <span class="hq-icon">📞</span>
+                  <span class="hq-icon">ðŸ“ž</span>
                   <span>Phone contact not configured.</span>
                 </li>
                 <li class="hq-detail-item">
-                  <span class="hq-icon">✉</span>
+                  <span class="hq-icon">âœ‰</span>
                   <span>Email contact not configured.</span>
                 </li>
                 <li class="hq-detail-item">
-                  <span class="hq-icon">⏰</span>
+                  <span class="hq-icon">â°</span>
                   <span>Office hours not configured.</span>
                 </li>
               </ul>
-            </div>
-
-            <!-- City-level map; no exact office address has been provided. -->
-            <div class="map-embed-container">
-              <iframe
-                title="Map of Jabalpur, Madhya Pradesh"
-                src="https://maps.google.com/maps?q=Jabalpur%2C%20Madhya%20Pradesh%2C%20India&amp;output=embed"
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade"
-                allowfullscreen>
-              </iframe>
+              <div class="map-embed-container">
+                <iframe
+                  title="Map showing Jabalpur, Madhya Pradesh"
+                  src="https://www.google.com/maps?q=Jabalpur%2C%20Madhya%20Pradesh%2C%20India&amp;z=12&amp;output=embed"
+                  loading="lazy"
+                  referrerpolicy="no-referrer-when-downgrade"
+                  allowfullscreen>
+                </iframe>
+              </div>
+              <p class="form-help">This map marks Jabalpur city, not a verified office address.</p>
+              <a class="map-directions-link" href="https://www.google.com/maps/search/?api=1&amp;query=Jabalpur%2C%20Madhya%20Pradesh%2C%20India" target="_blank" rel="noopener noreferrer">Open Jabalpur in Google Maps â†—</a>
+              <p class="form-help">Messages are saved only when the SQL-backed service is running and configured. Email replies are not configured.</p>
             </div>
           </div>
         </div>
@@ -150,18 +161,18 @@
         <div class="section-header">
           <span class="pill-badge pill-badge-green" style="margin-bottom: 12px;">Frequently Asked Questions</span>
           <h2 class="section-title">Answers to Common Inquiries</h2>
-          <p class="section-subtitle">Answers about the demo website, donation requests, and programs.</p>
+          <p class="section-subtitle">Current website service status.</p>
         </div>
 
         <div class="faq-list">
           <!-- FAQ 1 -->
           <div class="faq-item active">
             <button class="faq-question">
-              <span>How does this donation demo work?</span>
+              <span>Can I donate online?</span>
               <span class="faq-icon">+</span>
             </button>
             <div class="faq-answer">
-              The form records a pending request only. This demo has no verified financial records, payment processing, or audit reports.
+              Manual UPI details appear on the Donate page after an administrator configures the genuine QR code and receiving account. Submitted transaction details remain pending until manually verified.
             </div>
           </div>
 
@@ -172,7 +183,7 @@
               <span class="faq-icon">+</span>
             </button>
             <div class="faq-answer">
-              Tax benefits depend on current eligibility and approved documentation. No tax certificate is issued by this demo website.
+              Tax eligibility has not been verified. Please do not rely on this website for tax or registration claims.
             </div>
           </div>
 
@@ -183,7 +194,7 @@
               <span class="faq-icon">+</span>
             </button>
             <div class="faq-answer">
-              Absolutely. We are registered under MCA with CSR Registration Number CSR00012345. We partner with companies for employee engagement drives, infrastructure funding, and environmental ESG credits.
+              We have not published verified details about corporate partnerships.
             </div>
           </div>
 
@@ -194,7 +205,7 @@
               <span class="faq-icon">+</span>
             </button>
             <div class="faq-answer">
-              Yes, our digital volunteer network accepts educators, graphic designers, digital tutors, and tech coordinators who contribute remotely 2-4 hours per week.
+              Volunteer-interest details can be submitted through the form, but registration and email notifications are not configured.
             </div>
           </div>
         </div>
@@ -205,50 +216,17 @@
   <!-- Donation Modal -->
   <div class="modal-overlay" id="donationModal" role="dialog" aria-modal="true" aria-labelledby="donationModalTitle">
     <div class="modal-card">
-      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">✕</button>
+      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close modal">âœ•</button>
 
       <div class="modal-header">
-        <div class="modal-heart-icon">💚</div>
-        <h3 class="modal-title" id="donationModalTitle">Make A Donation</h3>
-        <p class="modal-subtitle">Your contribution brings education, healthcare & food to those in need.</p>
+        <div class="modal-heart-icon">ðŸ’š</div>
+        <h3 class="modal-title" id="donationModalTitle">Manual UPI donations</h3>
+        <p class="modal-subtitle">The manual UPI contribution page is available when an administrator configures the receiving account and genuine QR image. Submitted payments remain pending until verified.</p>
       </div>
 
       <div class="modal-body">
-        <div class="donation-freq-toggle">
-          <button type="button" class="freq-btn active" data-freq="one-time">One-Time Gift</button>
-          <button type="button" class="freq-btn" data-freq="monthly">Monthly Support</button>
-        </div>
-
-        <label class="amount-label">SELECT AMOUNT ($)</label>
-        <div class="preset-amounts-row">
-          <button type="button" class="preset-btn" data-amount="25">$25</button>
-          <button type="button" class="preset-btn selected" data-amount="50">$50</button>
-          <button type="button" class="preset-btn" data-amount="100">$100</button>
-        </div>
-
-        <div class="impact-explainer-badge" id="impactExplainerBadge">
-          🌱 Provides complete winter warm clothing & health checkup for 3 children.
-        </div>
-
-        <div class="custom-amount-group form-group">
-          <label class="amount-label" for="customAmountInput">CUSTOM AMOUNT</label>
-          <input type="number" id="customAmountInput" class="form-control" value="50" min="5" max="1000000" step="5">
-        </div>
-
-
-        <p class="form-help">Payment processing is not configured. This form records a pending request only.</p>
-
-        <div class="form-group">
-          <label class="amount-label" for="donorNameInput">YOUR FULL NAME</label>
-          <input type="text" id="donorNameInput" class="form-control" placeholder="Your name" maxlength="120" required>
-        </div>
-
-        <div class="form-group" style="margin-bottom: 22px;">
-          <label class="amount-label" for="donorEmailInput">EMAIL ADDRESS</label>
-          <input type="email" id="donorEmailInput" class="form-control" placeholder="you@example.org" maxlength="254" required>
-        </div>
-
-        <button type="button" class="btn-proceed-pay" id="proceedPayBtn">Submit Donation Request</button>
+        <p class="form-help">Manual UPI contributions require administrator configuration and remain pending until verified.</p>
+        <a class="btn btn-primary" href="contact.html">Contact us</a>
       </div>
     </div>
   </div>
@@ -259,46 +237,44 @@
       <div class="footer-top-grid">
         <div>
           <div class="brand-logo" style="margin-bottom: 14px;">
-            <div class="brand-icon-wrapper">🌱</div>
+            <div class="brand-icon-wrapper">ðŸŒ±</div>
             <div class="brand-text-group">
               <span class="brand-name" style="color:#fff;">Ayush NGO</span>
-              <span class="brand-tagline" style="color:#a7f3d0;">EMPOWERING LIVES, RESTORING HOPE</span>
+              <span class="brand-tagline" style="color:#a7f3d0;">AYUSH NGO WEBSITE</span>
             </div>
           </div>
           <p class="footer-desc">
-            Ayush NGO is the brand used for this website demo. Official organization, program, and contact details must be verified before publication.
+            Official organization, program, and contact details have not been verified for publication.
           </p>
         </div>
 
         <div>
           <h4 class="footer-col-title">Explore Pages</h4>
           <ul class="footer-links-list">
-            <li><a href="index.html">🏠 Home Page</a></li>
-            <li><a href="about.html">👤 About Our Mission</a></li>
-            <li><a href="work.html">💼 Key Initiatives &amp; Projects</a></li>
-            <li><a href="gallery.html">🖼️ Photo &amp; Event Gallery</a></li>
-            <li><a href="blog.html">📰 Latest News &amp; Articles</a></li>
-            <li><a href="contact.html">✉️ Contact &amp; Headquarters</a></li>
-            <li><a href="showcase.html">田 All Pages Showcase</a></li>
+            <li><a href="index.html">ðŸ  Home Page</a></li>
+            <li><a href="about.html">ðŸ‘¤ Organization information</a></li>
+            <li><a href="work.html">ðŸ’¼ Program information</a></li>
+            <li><a href="gallery.html">ðŸ–¼ï¸ Verified photos</a></li>
+            <li><a href="blog.html">ðŸ“° Verified updates</a></li>
+            <li><a href="contact.html">âœ‰ï¸ Contact form</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="footer-col-title">Active Causes</h4>
+          <h4 class="footer-col-title">Website services</h4>
           <ul class="footer-links-list">
-            <li><a href="work.html">Shiksha Mission 2026</a></li>
-            <li><a href="work.html">Mobile Health Vans</a></li>
-            <li><a href="work.html">Clean Earth Drive</a></li>
-            <li><a href="work.html">Winter Relief Drive</a></li>
-            <li><a href="work.html">Women Vocational Cells</a></li>
+            <li><a href="login.html">Sign in</a></li>
+            <li><a href="signup.html">Create account</a></li>
+            <li><a href="privacy.html">Privacy information</a></li>
+            <li><a href="terms.html">Terms information</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="footer-col-title">Stay Connected</h4>
-          <p class="footer-desc">Subscribe to receive project and website updates.</p>
-          <form class="newsletter-form">
-            <input type="email" class="newsletter-input" placeholder="Enter your email" required>
+          <p class="footer-desc">Email subscriptions are stored when the database is configured. Email updates are not currently sent.</p>
+          <form class="newsletter-form" name="newsletter" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" action="/thank-you.html"><input type="hidden" name="form-name" value="newsletter"><div class="form-honeypot" aria-hidden="true"><label>Leave this field blank<input name="bot-field" type="text" tabindex="-1" autocomplete="off"></label></div>
+            <input type="email" name="email" class="newsletter-input" placeholder="Enter your email" required>
             <button type="submit" class="newsletter-btn">Join</button>
           </form>
           <div id="backendStatusIndicator" style="font-size:0.8rem; color:#94a3b8; margin-top: 18px;"></div>
@@ -307,16 +283,18 @@
 
       <div class="footer-bottom-bar">
         <div class="footer-copyright">
-          © <span id="currentYear">2026</span> Ayush NGO. Website demonstration.
+          Â© <span id="currentYear">2026</span> Ayush NGO. Organization information awaiting verification.
         </div>
 
       </div>
     </div>
   </footer>
 
-  <script src="js/deploy-config.js"></script>
-  <script src="js/api.js"></script>
+  <script src="js/site-data.js"></script>
+<script src="js/deploy-config.js"></script>
+  <script src="js/api.js"></script><script src="js/payment-service.js"></script>
   <script src="js/main.js"></script>
   <script src="js/auth-ui.js"></script>
+  <script src="js/theme-ui.js"></script>
 </body>
 </html>
