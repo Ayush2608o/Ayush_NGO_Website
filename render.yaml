@@ -1,25 +1,28 @@
 services:
   - type: web
-    name: vistar-ngo-java-api
-    runtime: docker
+    name: ayush-ngo-node-api
+    runtime: node
     plan: starter
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    rootDir: backend-node
+    buildCommand: npm ci
+    startCommand: npm run migrate && npm start
     healthCheckPath: /api/health
     envVars:
-      - key: DB_URL
-        sync: false
-      - key: DB_USERNAME
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
+      - key: NODE_ENV
+        value: production
       - key: FRONTEND_ORIGIN
-        sync: false
-      - key: COOKIE_SECURE
-        value: "true"
+        value: https://ayushngo.netlify.app
+      - key: SESSION_SECRET
+        generateValue: true
+      - key: TRUST_PROXY
+        value: "1"
       - key: COOKIE_SAME_SITE
         value: none
+      - key: DB_PATH
+        value: /var/data/ayush_ngo_db.db
+      - key: UPLOAD_DIR
+        value: /var/data/uploads
     disk:
-      name: ngo-data
+      name: ayush-ngo-data
       mountPath: /var/data
       sizeGB: 1
